@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Elementary Cellular Automata</title>
+    <meta name="description" content="A one-dimensional elementary cellular automaton simulator">
+    <meta name="keywords" content="cellular automata">
+    <meta name="author" content="Douglas G. Moore">
+    <link rel="stylesheet" href="styles/main.css">
+    <script type="application/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <script type="application/javascript" src="scripts/main.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Elementary Cellular Automata</h1>
+    </header>
+    <div id="container">
+        <div id="instructions">
+            <h2>Instructions:</h2>
+            <p>
+                You can click the cells in the bottom-most row of the array to toggle their state.
+                You can choose the number of cells, the speed of the simulation, and the ECA rule.
+            </p>
+
+            <p>
+                Once you have chosen your settings, you can toggle the state and run a simulation of
+                the model using the other controls:
+            </p>
+            <dl>
+                <dt><strong>Step</strong></dt>
+                <dd>Take one step in the simulation</dd>
+                <dt><strong>Start</strong></dt>
+                <dd>Run the simulation</dd>
+                <dt><strong>Stop</strong></dt>
+                <dd>Stop the simulation</dd>
+                <dt><strong>Restart</strong></dt>
+                <dd>Stop and clear the simulation</dd>
+            </dl>
+        </div>
+        <div id="ca">
+            <div id="settings">
+                <div id="cell-count-settings">
+                    <label for="cell-count-slider">Number of Cells:</label>
+                    <input type="range" min="3" max="25" id="cell-count-slider" name="cell-count-slider" />
+                    <output id="cell-count" name="cell-count" for="cell-count-slider"></output>
+                </div>
+                <div id="speed-settings">
+                    <label for="speed-slider">Simulation Speed:</label>
+                    <input type="range" min="100" max="1000" step="100" id="speed-slider" name="speed-slider" />
+                    <output id="speed" name="speed" for="speed-slider"></output>
+                </div>
+                <div id="rule-settings">
+                    <label for="rule">Rule:</label>
+                    <select name="rule" id="rule"></select>
+                </div>
+            </div>
+            <svg id="trajectory" width="400" height="600"></svg>
+            <div id="controls">
+                <input type="button" id="step" value="Step" />
+                <input type="button" id="start" value="Start" />
+                <input type="button" id="stop" value="Stop" disabled />
+                <input type="button" id="restart" value="Restart" />
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>Copyright © 2018, <a href="https://emergence.asu.edu">Emergence@ASU</a></p>
+    </footer>
+</body>
+</html>
