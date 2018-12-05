@@ -1,0 +1,93 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    width: 100%;
+    padding: 0px;
+    height: 100%;
+    margin: 0px 0px 100px 0px;
+}
+
+body div {
+    max-width: 80%;
+    max-width: 1000px;
+    min-width: 400px;
+    margin: 0px auto;
+}
+
+header {
+    padding: 1em;
+    color: white;
+    background: #dbae57;
+    clear: none;
+    text-align: center;
+}
+
+footer {
+    color: black;
+    background: #dbae57;
+    clear: none;
+    text-align: center;
+    font-size: 14px;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    padding: 13px 0px;
+}
+
+#container {
+    display: flex;
+    min-height: 800px;
+    margin-top: 20px;
+}
+
+#instructions {
+    width: 45%;
+    min-width: 400px;
+}
+
+#ca {
+    width: 400px;
+    padding: 0px 0px;
+    text-align: center;
+}
+
+#settings {
+    display: block;
+    margin: 5px 0px;
+}
+
+#settings div {
+    display: flex;
+    justify-content: flex-start;
+}
+
+#settings div label {
+    text-align: left;
+    width: 120px;
+    margin-right: 15px;
+}
+
+#settings div input, #settings div select {
+    width: 150px;
+    margin-right: 15px;
+}
+
+#settings div output {
+    text-align: left;
+    width: 100px;
+}
+
+#trajectory {
+    border: 1px solid black;
+    background: #eeeeee;
+}
+
+#controls {
+    display: flex;
+    justify-content: center;
+    margin: 5px 0px;
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Nest Site Selection</title>
+    <meta name="description" content="See how the environment can affect the outcome of a decision">
+    <meta name="keywords" content="nest site selection">
+    <meta name="author" content="Jake R. Hanson">
+    <link rel="stylesheet" href="styles/main.css">
+    <script type="application/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <script type="application/javascript" src="scripts/main.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Nest Site Selection</h1>
+    </header>
+    <div id="container">
+        <div id="instructions">
+            <h2>Instructions:</h2>
+            <p>
+                See how the geometry of the environment can affect the ability for a colony to reach quorum at a given nest. Parameters such as radius, aperture size, and entry rate can be changed via the toggle bars above each nest.
+            </p>
+
+            <p>
+                Once you have chosen your settings, you can toggle the state and run a simulation of the model using the other controls:
+            </p>
+            <dl>
+                <dt><strong>Step</strong></dt>
+                <dd>Take one step in the simulation</dd>
+                <dt><strong>Start</strong></dt>
+                <dd>Run the simulation</dd>
+                <dt><strong>Stop</strong></dt>
+                <dd>Stop the simulation</dd>
+                <dt><strong>Restart</strong></dt>
+                <dd>Stop and clear the simulation</dd>
+            </dl>
+        </div>
+        <div id="ca">
+            <div id="settings">
+<!--                 <div id="radius-settings">
+                    <label for="radius-slider">Radius:</label>
+                    <input type="range" min="1" max="10" id="radius-slider" name="radius-slider" />
+                    <output id="radius" name="radius" for="radius-slider"></output>
+                </div>
+                <div id="aperture-settings">
+                    <label for="aperture-slider">Aperture:</label>
+                    <input type="range" min="1" max="10" id="aperture-slider" name="aperture-slider" />
+                    <output id="aperture" name="aperture" for="aperture-slider"></output>
+                </div> -->
+                <div id="cell-count-settings">
+                    <label for="cell-count-slider">Number of Cells:</label>
+                    <input type="range" min="20" max="180" id="cell-count-slider" name="cell-count-slider" />
+                    <output id="cell-count" name="cell-count" for="cell-count-slider"></output>
+                </div>
+                <div id="speed-settings">
+                    <label for="speed-slider">Simulation Speed:</label>
+                    <input type="range" min="100" max="1000" step="100" id="speed-slider" name="speed-slider" />
+                    <output id="speed" name="speed" for="speed-slider"></output>
+                </div>
+                <div id="rule-settings">
+                    <label for="rule">Rule:</label>
+                    <select name="rule" id="rule"></select>
+                </div>
+            </div>
+            <svg id="trajectory" width="400" height="400"></svg>
+<!--             <svg id="nest" width="400" height="400"></svg>
+ -->            <div id="controls">
+                <input type="button" id="step" value="Step" />
+                <input type="button" id="start" value="Start" />
+                <input type="button" id="stop" value="Stop" disabled />
+                <input type="button" id="restart" value="Restart" />
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>Copyright © 2018, <a href="https://emergence.asu.edu">Emergence@ASU</a></p>
+    </footer>
+</body>
+</html>
