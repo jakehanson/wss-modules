@@ -79,7 +79,7 @@ const ECA = function(code) {
  * (`cell_count`), an ECA `code`, and the time to wait between subsequent
  * simulation cycles (`step_time`) in milliseconds.
  */
-const App = function({ cell_count, aperture, code, step_time }) {
+const App = function({ radius, aperture, code, step_time }) {
     // Create a color scheme with two colors `[white, grey]`
     const color_scheme = d3.scaleOrdinal(['#ffffff', '#666666']);
 
@@ -90,7 +90,7 @@ const App = function({ cell_count, aperture, code, step_time }) {
     let rule = ECA(code);
 
     // Initialize zero-filled array of cell states
-    let state = new Array(cell_count).fill(0);
+    let state = new Array(radius).fill(0);
 
     // Get the width and height of the SVG element
     let width = svg.attr('width');
@@ -99,18 +99,6 @@ const App = function({ cell_count, aperture, code, step_time }) {
     // Get the center coords
     let cx = width/2;
     let cy = height/2;
-    let radius = cell_count;
-
-    // Determine the cell size (height and width) of each cell
-    let cell_size = width / cell_count;
-
-    // let open_angle = aperture;
-
-    // Determine the number of rows that will fit in the SVG
-    let nrows = Math.ceil(height / cell_size);
-
-    // Reset the hight of the SVG to fix exactly `nrows`
-    // svg.attr('height', nrows * cell_size);
 
     // Create a counter to keep track of the number of timesteps thus far
     // simulated
@@ -126,7 +114,7 @@ const App = function({ cell_count, aperture, code, step_time }) {
 
         let arc = d3.arc();
 
-        console.log(radius);
+        //console.log(radius);
 
         svg.selectAll("path").remove(); // Remove old nest
         svg.append("path")
@@ -219,7 +207,7 @@ const App = function({ cell_count, aperture, code, step_time }) {
         stop();
 
         // Reinitialize the state to all zeros
-        state = new Array(cell_count).fill(0);
+        state = new Array(radius).fill(0);
 
         // Reset the timestep counter
         timestep = 0;
@@ -234,26 +222,20 @@ const App = function({ cell_count, aperture, code, step_time }) {
 
     // We now create the object to be returned.
     return Object.create({
-        get cell_count() {
-            return cell_count;
+        get radius() {
+            return radius;
         },
 
-        set cell_count(n) {
+        set radius(n) {
             // Stop the simulation (if it is running)
             this.stop();
 
             // Set the cell_count
-            cell_count = n;
+            radius = n;
 
             // Update the cell-count slider's label
-            d3.select('#cell-count').html(`${cell_count} cells`);
+            d3.select('#radius').html(`${radius} pixels`);
 
-            // Compute cell_size, nrows and set the height of the SVG according
-            // to the new cell_count
-            cell_size = width / cell_count;
-            nrows = Math.ceil(height / cell_size);
-
-            radius = cell_count;
             this.restart();
 
         },
@@ -311,7 +293,7 @@ const App = function({ cell_count, aperture, code, step_time }) {
 (function() {
     // Create the initial application state
     const app = App({
-        cell_count: 100,
+        radius: 100,
         aperture: 25,
         code: 30,
         step_time: 500
@@ -325,12 +307,12 @@ const App = function({ cell_count, aperture, code, step_time }) {
 
     // Register an aninput handler to the cell count slider, and set the slider's
     // initial value
-    d3.select('#cell-count-slider').on('input', function() {
+    d3.select('#radius-slider').on('input', function() {
         // Simply set the cell_count
-        app.cell_count = parseInt(this.value);
-    }).attr('value', `${app.cell_count} cells`);
+        app.radius = parseInt(this.value);
+    }).attr('value', `${app.radius}`);
     // Set the slider's initial label
-    d3.select('#cell-count').html(`${app.cell_count} cells`);
+    d3.select('#radius').html(`${app.radius} pixels`);
 
     // Register an aninput handler to the cell count slider, and set the slider's
     // initial value
