@@ -1,5 +1,9 @@
 'use strict';
 
+// TO DO:
+// Disable Colony Size Slider?
+// Array Pushback
+
 
 // We need an object to represent ants
 const Ants = function(num_ants) {
@@ -11,15 +15,16 @@ const Ants = function(num_ants) {
     }
 
     // Update the `state` (arrays of x,y locations) according to rule
-    const fire = function(x_positions, y_positions) {
+    const fire = function(x_positions, x_velocities, y_positions, y_velocities) {
 
         for (let i = 0; i < num_ants; ++i) {
-            x_positions[i] = x_positions[i]+1;
+            x_positions[i] = x_positions[i]+x_velocities[i];
+            y_positions[i] = y_positions[i]-y_velocities[i];
+
         }
 
         console.log(x_positions);
-        //return new_x;
-    
+
     };
 
 
@@ -118,12 +123,18 @@ const ECA = function(code) {
  * (`cell_count`), an ECA `code`, and the time to wait between subsequent
  * simulation cycles (`step_time`) in milliseconds.
  */
-const App = function({ radius, aperture, code, num_ants, step_time}) {
+const App = function({ radius, aperture, code, num_ants, disc_rate, step_time}) {
     // Create a color scheme with two colors `[white, grey]`
     const color_scheme = d3.scaleOrdinal(['#ffffff', '#666666']);
 
     // Get the SVG element with id 'trajectory'
     let svg = d3.select('#trajectory');
+    let width = svg.attr('width');
+    let height = svg.attr('height');
+
+    // Get the center coords
+    let cx = width/2;
+    let cy = height/2;
 
     // Create an initial rule
     let rule = ECA(code);
@@ -131,15 +142,10 @@ const App = function({ radius, aperture, code, num_ants, step_time}) {
 
     // Initialize zero-filled array of cell states
     let state = new Array(radius).fill(0);
-    let x_positions = new Array(nest.num_ants).fill(0); // initialize array and fill with zeros
-
-    // Get the width and height of the SVG element
-    let width = svg.attr('width');
-    let height = svg.attr('height');
-
-    // Get the center coords
-    let cx = width/2;
-    let cy = height/2;
+    let x_positions = new Array(nest.num_ants).fill(cx); // initialize array and fill with zeros
+    let x_velocities = new Array(nest.num_ants).fill(0); // initialize array and fill with zeros
+    let y_positions = new Array(nest.num_ants).fill(cy-radius); // initialize array and fill with zeros
+    let y_velocities = new Array(nest.num_ants).fill(-1); // initialize array and fill with zeros
 
     // Create a counter to keep track of the number of timesteps thus far
     // simulated
@@ -166,6 +172,20 @@ const App = function({ radius, aperture, code, num_ants, step_time}) {
             startAngle: aperture*Math.PI/360,
             endAngle: 2*Math.PI-aperture*Math.PI/360,
         }));
+
+        svg.selectAll("circle").remove();
+        for (let i = 0; i < num_ants; ++i) {
+            svg.append("circle")
+            .attr("cx",x_positions[i])
+            .attr("cy",y_positions[i])
+            .attr("r",5);
+        }
+
+        // svg.append("circle")
+        // .attr("cx", x_positions[0])
+        // .attr("cy", y_positions[0])
+        // .attr("r", 5);
+
 
         // If the simulation has run for more timesteps than can fit
         // into the SVG
@@ -205,7 +225,7 @@ const App = function({ radius, aperture, code, num_ants, step_time}) {
     const step = function() {
         // Update the state given the rule
         rule.fire(state, state);
-        nest.fire(x_positions, x_positions);
+        nest.fire(x_positions, x_velocities,y_positions, y_velocities);
         // Increment the timestep counter
         timestep += 1;
         // Render the new state
@@ -254,7 +274,10 @@ const App = function({ radius, aperture, code, num_ants, step_time}) {
 
         // Reinitialize the state to all zeros
         state = new Array(radius).fill(0);
-        x_positions = new Array(nest.num_ants).fill(0); // initialize array and fill with zeros
+        x_positions = new Array(nest.num_ants).fill(cx); // initialize array and fill with zeros
+        x_velocities = new Array(nest.num_ants).fill(0.); // initialize array and fill with zeros
+        y_positions = new Array(nest.num_ants).fill(cy-radius); // initialize array and fill with zeros
+        y_velocities = new Array(nest.num_ants).fill(-1); // initialize array and fill with zeros
 
         // Reset the timestep counter
         timestep = 0;
@@ -347,6 +370,23 @@ const App = function({ radius, aperture, code, num_ants, step_time}) {
         },
 
 
+        get disc_rate() {
+            return disc_rate;
+        },
+
+        set disc_rate(n) {
+            // Stop the simulation (if it is running)
+            this.stop();
+
+            // Set the discovery rate
+            disc_rate = n;
+
+            // Update the cell-count slider's label
+            d3.select('#discovery').html(`${disc_rate} steps/ant`);
+            this.restart();
+        },  
+
+
         // Include the step, start, stop and restart methods in the object
         step, start, stop, restart
     });
@@ -361,7 +401,8 @@ const App = function({ radius, aperture, code, num_ants, step_time}) {
         aperture: 25,
         code: 30,
         num_ants: 100,
-        step_time: 500
+        disc_rate: 50,
+        step_time: 550
     });
 
     // Register onclick handlers to the step, start, stop and restart buttons
@@ -370,16 +411,15 @@ const App = function({ radius, aperture, code, num_ants, step_time}) {
     d3.select('#stop').on('click', app.stop);
     d3.select('#restart').on('click', app.restart);
 
-    // Register an aninput handler to the cell count slider, and set the slider's
+    // Register an aninput handler to the radius slider, and set the slider's
     // initial value
     d3.select('#radius-slider').on('input', function() {
-        // Simply set the cell_count
         app.radius = parseInt(this.value);
     }).attr('value', `${app.radius}`);
     // Set the slider's initial label
     d3.select('#radius').html(`${app.radius} pixels`);
 
-    // Register an aninput handler to the cell count slider, and set the slider's
+    // Register an aninput handler to the aperture slider, and set the slider's
     // initial value
     d3.select('#aperture-slider')
     // .attr("min",0)
@@ -387,18 +427,27 @@ const App = function({ radius, aperture, code, num_ants, step_time}) {
     // .attr("step",Math.PI/25.)
     .attr("value",app.aperture)
     .on('input', function() {
-        // Simply set the cell_count
         app.aperture = parseInt(this.value);
     }).attr('value', `${app.aperture}`);
     // Set the slider's initial label
     d3.select('#aperture').html(`${app.aperture} degrees`);
 
+    // Register an aninput handler to the colony size slider, and set the slider's
+    // initial value
     d3.select('#number-slider').on('input', function() {
-        // Simply set the cell_count
         app.num_ants = parseInt(this.value);
     }).attr('value', `${app.num_ants}`);
     // Set the slider's initial label
     d3.select('#number').html(`${app.num_ants} ants`);
+
+
+    // Register an aninput handler to the discovery rate slider, and set the slider's
+    // initial value
+    d3.select('#discovery-slider').on('input', function() {
+        app.disc_rate = parseInt(this.value);
+    }).attr('value', `${app.disc_rate}`);
+    // Set the slider's initial label
+    d3.select('#discovery').html(`${app.disc_rate} steps/ant`);
 
     // Register an oninput handler to the speed slider, and set the slider's
     // initial value
