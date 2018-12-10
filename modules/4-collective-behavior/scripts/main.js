@@ -1,9 +1,47 @@
 'use strict';
 
 
-/**
- * We need an object to represent an elementary cellular automaton.
- */
+// We need an object to represent ants
+const Ants = function(num_ants) {
+
+    // If the provided number of ants is not greater than 0, throw an
+    // error because the code is invalid.
+    if (num_ants < 0) {
+        throw new Error(`invalid number of ants code: got ${num_ants}, expected greater than 0`);
+    }
+
+    // Update the `state` (arrays of x,y locations) according to rule
+    const fire = function(x_positions, y_positions) {
+
+        for (let i = 0; i < num_ants; ++i) {
+            x_positions[i] = x_positions[i]+1;
+        }
+
+        console.log(x_positions);
+        //return new_x;
+    
+    };
+
+
+    // Create an Ants object with accessors for the number of ants, and the fire method as
+    // defined above.
+    return Object.create({
+        get num_ants() {
+            return num_ants;
+        },
+
+        set num_ants(c) {
+            if (c < 0) {
+                throw new Error(`invalid number of ants code: got ${num_ants}, expected greater than 0`);
+            }
+            num_ants = c;
+        },
+        fire
+    });
+};
+
+
+// We need an object to represent an elementary cellular automaton.
 const ECA = function(code) {
     // The ECAs are two-colored
     const k = 2;
@@ -52,6 +90,7 @@ const ECA = function(code) {
             dest[end] = 1 & (code >> shift);
         }
 
+        // console.log(dest);
         return dest;
     };
 
@@ -79,7 +118,7 @@ const ECA = function(code) {
  * (`cell_count`), an ECA `code`, and the time to wait between subsequent
  * simulation cycles (`step_time`) in milliseconds.
  */
-const App = function({ radius, aperture, code, step_time }) {
+const App = function({ radius, aperture, code, num_ants, step_time}) {
     // Create a color scheme with two colors `[white, grey]`
     const color_scheme = d3.scaleOrdinal(['#ffffff', '#666666']);
 
@@ -88,9 +127,11 @@ const App = function({ radius, aperture, code, step_time }) {
 
     // Create an initial rule
     let rule = ECA(code);
+    let nest = Ants(num_ants);
 
     // Initialize zero-filled array of cell states
     let state = new Array(radius).fill(0);
+    let x_positions = new Array(nest.num_ants).fill(0); // initialize array and fill with zeros
 
     // Get the width and height of the SVG element
     let width = svg.attr('width');
@@ -164,6 +205,7 @@ const App = function({ radius, aperture, code, step_time }) {
     const step = function() {
         // Update the state given the rule
         rule.fire(state, state);
+        nest.fire(x_positions, x_positions);
         // Increment the timestep counter
         timestep += 1;
         // Render the new state
@@ -175,6 +217,9 @@ const App = function({ radius, aperture, code, step_time }) {
         // Disable the step and start buttons
         d3.select('#step').attr('disabled', true);
         d3.select('#start').attr('disabled', true);
+        //d3.select('#number').attr('disabled',true);
+
+
         // Enable the stop button
         d3.select('#stop').attr('disabled', null);
 
@@ -195,6 +240,7 @@ const App = function({ radius, aperture, code, step_time }) {
             // Enable the step and start buttons
             d3.select('#step').attr('disabled', null);
             d3.select('#start').attr('disabled', null);
+            //d3.select('#number').attr('disabled',null);
 
             // Disable the stop button
             d3.select('#stop').attr('disabled', true);
@@ -208,6 +254,7 @@ const App = function({ radius, aperture, code, step_time }) {
 
         // Reinitialize the state to all zeros
         state = new Array(radius).fill(0);
+        x_positions = new Array(nest.num_ants).fill(0); // initialize array and fill with zeros
 
         // Reset the timestep counter
         timestep = 0;
@@ -280,8 +327,25 @@ const App = function({ radius, aperture, code, step_time }) {
             this.stop();
 
             // Set the ECA code
-            rule.code = c;
+            rule.code = c;   // sets the code of the rule object
         },
+
+        get num_ants() {
+            return nest.num_ants;
+        },
+
+        set num_ants(c) {
+            // Stop the simulation (if it is running)
+            this.stop();
+
+            // Set the ECA code
+            nest.num_ants = c; // sets the number of ants for our nest object
+            x_positions = new Array(nest.num_ants).fill(0); // initialize array and fill with zeros
+
+            d3.select('#number').html(`${nest.num_ants} ants`);
+
+        },
+
 
         // Include the step, start, stop and restart methods in the object
         step, start, stop, restart
@@ -296,6 +360,7 @@ const App = function({ radius, aperture, code, step_time }) {
         radius: 100,
         aperture: 25,
         code: 30,
+        num_ants: 100,
         step_time: 500
     });
 
@@ -328,6 +393,13 @@ const App = function({ radius, aperture, code, step_time }) {
     // Set the slider's initial label
     d3.select('#aperture').html(`${app.aperture} degrees`);
 
+    d3.select('#number-slider').on('input', function() {
+        // Simply set the cell_count
+        app.num_ants = parseInt(this.value);
+    }).attr('value', `${app.num_ants}`);
+    // Set the slider's initial label
+    d3.select('#number').html(`${app.num_ants} ants`);
+
     // Register an oninput handler to the speed slider, and set the slider's
     // initial value
     d3.select('#speed-slider').on('input', function() {
@@ -340,11 +412,11 @@ const App = function({ radius, aperture, code, step_time }) {
     // the 256 rules
     d3.select('#rule').on('change', function() {
         // Simply set the ECA code
-        app.code = parseInt(this.value);
+        app.rule = parseInt(this.value);
     }).selectAll('option')          // Select all of the option tags
         .data(d3.range(256))        // Set an array [0,...,255] as the data, on for each rule
         .enter().append('option')   // Add an option tag for each rule
         .attr('value', (d) => d)    // Set the value of the option to the rule
-        .attr('selected', (d) => (d === app.code) ? true : null) // Select the default rule code
+        .attr('selected', (d) => (d === app.rule) ? true : null) // Select the default rule code
         .html((d) => d);            // Set the text of the dropdown option
 }());
