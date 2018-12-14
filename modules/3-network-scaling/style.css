@@ -1,0 +1,50 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    width: 100%;
+    padding: 0px;
+    height: 100%;
+    margin: 0px 0px 100px 0px;
+}
+
+body div {
+    max-width: 80%;
+    max-width: 1000px;
+    min-width: 400px;
+    margin: 0px auto;
+}
+
+header {
+    padding: 1em;
+    color: white;
+    background: #8c1d40;
+    clear: none;
+    text-align: center;
+}
+
+footer {
+    color: black;
+    background: #ffc267;
+    clear: none;
+    text-align: center;
+    font-size: 14px;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    padding: 13px 0px;
+}
+
+#container {
+    display: flex;
+    min-height: 800px;
+    margin-top: 20px;
+}
+
+#instructions {
+    width: 45%;
+    min-width: 400px;
+}

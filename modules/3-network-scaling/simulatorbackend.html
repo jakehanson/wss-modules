@@ -1,48 +1,25 @@
-<script src="jsnetworkx.js"></script>
-<script src="https://d3js.org/d3.v5.min.js"></script>
+<!doctype html>
+<html>
+<head>
+	<title>Network Builder Simulation</title>
+	<link rel="stylesheet" href="style.css" />
+	<script type="application/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+	<script type="application/javascript" src="simulator.js" defer></script>
+</head>
+
+<body>
+	<div id="container">
+		<div id="instructions">
+			<h2>Instructions</h2>
+			<p>To add a node to the network, click the "Add Node" button, and then click where you'd like to place the node.</p>
+
+			<p>To connect two nodes, click the "Add Edge" button, and then click on each node you'd like to connect to each other.</p>
+
+			<p>To remove a node, click "Remove Node" and then click on the node you wish to remove.</p>
+
+			<p>To remove an edge, click "Remove Edge", and then click the two nodes connected by the edge you wish to remove.</p>
+		
+	</div>
 
 
-<script>
-
-var G= new jsnx.Graph();
-
-var G = jsnx.binomialGraph(6,0.8); //for back-end testing purposes
-//input nodes and edges from front end
-
-//G.addNode();
-//G.addEdge();
-
-
-
-var cluster=jsnx.averageClustering(G);
-console.log(cluster);
-var degrees=G.degree();
-var degreesum=0;
-for (let degree of degrees.values()) {   
-	degreesum += degree;
-}
-var nodesnumber=degrees.size;
-var meandegree=degreesum/nodesnumber;
-console.log(meandegree);
-
-
-var shortestpathsum=0;
-var nodes=G.nodes();
-var pathnumber=0;
-for (let node1 of nodes.values()){
-	for (let node2 of nodes.values()){
-		var shortestpath=jsnx.shortestPathLength(G,{source:node1,target:node2});
-		shortestpathsum += shortestpath;
-		pathnumber += 1;
-	}
-
-}
-
-
-var averagelength=shortestpathsum/pathnumber;
-console.log(averagelength);
-
-var distribution=jsnx.degreeHistogram(G);
-console.log(distribution);
-
-</script>
+</body>
