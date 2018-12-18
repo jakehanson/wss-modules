@@ -24,9 +24,19 @@ const Simulator = function(G, id = '#simulator') {
     // long as you keep them simple.
     const clustering_coefficient = () => jsnx.averageClustering(G);
 
+    const mean_degree = function() {
+        let degrees = G.degree();
+        let degreesum = 0;
+        for (let degree of degrees.values()) {
+            degreesum += degree;
+        }
+        return degreesum / degrees.size;
+    };
+
     return {
         draw_graph,
-        clustering_coefficient
+        clustering_coefficient,
+        mean_degree
     };
 };
 
@@ -37,16 +47,11 @@ const Simulator = function(G, id = '#simulator') {
 
     app.draw_graph();
 
-    var cluster = app.clustering_coefficient();
+    const cluster = app.clustering_coefficient();
     console.log(cluster);
 
-    var degrees = G.degree();
-    var degreesum = 0;
-    for (let degree of degrees.values()) {
-        degreesum += degree;
-    }
-    var meandegree = degreesum / degrees.size;
-    console.log(meandegree);
+    const mean_degree = app.mean_degree();
+    console.log(mean_degree);
 
     var shortestpathsum = 0;
     var nodes = G.nodes();
