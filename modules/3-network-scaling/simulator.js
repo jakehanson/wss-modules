@@ -33,10 +33,26 @@ const Simulator = function(G, id = '#simulator') {
         return degreesum / degrees.size;
     };
 
+    const average_shortest_path = function() {
+        let shortestpathsum = 0;
+        let nodes = G.nodes();
+        let pathnumber = 0;
+        for (let node1 of nodes.values()){
+            for (let node2 of nodes.values()){
+                let shortestpath = jsnx.shortestPathLength(G,{source:node1,target:node2});
+                shortestpathsum += shortestpath;
+                pathnumber += 1;
+            }
+        }
+
+        return shortestpathsum / pathnumber;
+    };
+
     return {
         draw_graph,
         clustering_coefficient,
-        mean_degree
+        mean_degree,
+        average_shortest_path,
     };
 };
 
@@ -53,19 +69,17 @@ const Simulator = function(G, id = '#simulator') {
     const mean_degree = app.mean_degree();
     console.log(mean_degree);
 
-    var shortestpathsum = 0;
-    var nodes = G.nodes();
-    var pathnumber = 0;
-    for (let node1 of nodes.values()){
-        for (let node2 of nodes.values()){
-            var shortestpath = jsnx.shortestPathLength(G,{source:node1,target:node2});
-            shortestpathsum += shortestpath;
-            pathnumber += 1;
-        }
+    // The jsnx.shortestPathLength method raises an error if you
+    // ask for the path length between disconnected nodes. We catch the
+    // error here and print it to the console so the script will keep
+    // running. If you don't have this, the script will stop, and the
+    // histogram will not be computed.
+    try {
+        const average_length = app.average_shortest_path();
+        console.log(average_length);
+    } catch(err) {
+        console.error(err);
     }
-
-    var averagelength = shortestpathsum / pathnumber;
-    console.log(averagelength);
 
     var distribution = jsnx.degreeHistogram(G);
     console.log(distribution);
