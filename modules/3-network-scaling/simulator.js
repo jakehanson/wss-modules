@@ -4,7 +4,7 @@ const Simulator = function(id = '#simulator') {
 
     let G = jsnx.binomialGraph(6, 0.3);
 
-    const draw_graph = function() {
+    const drawGraph = function() {
         const width = +div.attr('width');
         const height = +div.attr('height');
 
@@ -24,52 +24,52 @@ const Simulator = function(id = '#simulator') {
     // This is called an "arrow function". It has slightly different
     // scoping semantics, but they're pretty easy to reason about as
     // long as you keep them simple.
-    const clustering_coefficient = () => jsnx.averageClustering(G);
+    const clusteringCoefficient = () => jsnx.averageClustering(G);
 
-    const mean_degree = function() {
+    const meanDegree = function() {
         let degrees = G.degree();
-        let degreesum = 0;
+        let degree_sum = 0;
         for (let degree of degrees.values()) {
-            degreesum += degree;
+            degree_sum += degree;
         }
-        return degreesum / degrees.size;
+        return degree_sum / degrees.size;
     };
 
-    const average_shortest_path = function() {
-        let shortestpathsum = 0;
-        let nodes = G.nodes();
-        let pathnumber = 0;
+    const averageShortestPathLength = function() {
+        const nodes = G.nodes();
+        let shortest_path_sum = 0;
+        let path_number = 0;
         for (let node1 of nodes.values()){
             for (let node2 of nodes.values()){
-                let shortestpath = jsnx.shortestPathLength(G,{source:node1,target:node2});
-                shortestpathsum += shortestpath;
-                pathnumber += 1;
+                let shortest_path_length = jsnx.shortestPathLength(G,{source:node1,target:node2});
+                shortest_path_sum += shortest_path_length;
+                path_number += 1;
             }
         }
 
-        return shortestpathsum / pathnumber;
+        return shortest_path_sum / path_number;
     };
 
-    const degree_distribution = () => jsnx.degreeHistogram(G);
+    const degreeDistribution = () => jsnx.degreeHistogram(G);
 
     return {
-        draw_graph,
-        clustering_coefficient,
-        mean_degree,
-        average_shortest_path,
-        degree_distribution
+        drawGraph,
+        clusteringCoefficient,
+        meanDegree,
+        averageShortestPathLength,
+        degreeDistribution
     };
 };
 
 (function() {
     let app = Simulator();
 
-    app.draw_graph();
+    app.drawGraph();
 
-    const cluster = app.clustering_coefficient();
+    const cluster = app.clusteringCoefficient();
     console.log(cluster);
 
-    const mean_degree = app.mean_degree();
+    const mean_degree = app.meanDegree();
     console.log(mean_degree);
 
     // The jsnx.shortestPathLength method raises an error if you
@@ -78,12 +78,12 @@ const Simulator = function(id = '#simulator') {
     // running. If you don't have this, the script will stop, and the
     // histogram will not be computed.
     try {
-        const average_length = app.average_shortest_path();
+        const average_length = app.averageShortestPathLength();
         console.log(average_length);
     } catch(err) {
         console.error(err);
     }
 
-    const distribution = app.degree_distribution();
+    const distribution = app.degreeDistribution();
     console.log(distribution);
 }());
