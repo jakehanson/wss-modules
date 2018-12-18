@@ -19,7 +19,15 @@ const Simulator = function(G, id = '#simulator') {
         });
     };
 
-    return { draw_graph };
+    // This is called an "arrow function". It has slightly different
+    // scoping semantics, but they're pretty easy to reason about as
+    // long as you keep them simple.
+    const clustering_coefficient = () => jsnx.averageClustering(G);
+
+    return {
+        draw_graph,
+        clustering_coefficient
+    };
 };
 
 (function() {
@@ -29,7 +37,7 @@ const Simulator = function(G, id = '#simulator') {
 
     app.draw_graph();
 
-    var cluster = jsnx.averageClustering(G);
+    var cluster = app.clustering_coefficient();
     console.log(cluster);
 
     var degrees = G.degree();
