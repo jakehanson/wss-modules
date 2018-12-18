@@ -1,6 +1,8 @@
-const Simulator = function(G, id = '#simulator') {
+const Simulator = function(id = '#simulator') {
     const simId = id;
     const div = d3.select(simId);
+
+    let G = jsnx.binomialGraph(6, 0.3);
 
     const draw_graph = function() {
         const width = +div.attr('width');
@@ -60,9 +62,7 @@ const Simulator = function(G, id = '#simulator') {
 };
 
 (function() {
-    var G = jsnx.binomialGraph(6, 0.3);
-
-    let app = Simulator(G);
+    let app = Simulator();
 
     app.draw_graph();
 
