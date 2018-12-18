@@ -1,3 +1,10 @@
+// This is called a factory function. The very last thing that it does
+// is return an object. That object exposes functions that can can
+// access variables that are defined locally inside of the factory
+// function that would otherwise be unaccessible. As an example, the
+// graph G is a variable that's only difined inside of this factory
+// function, but the various methods, e.g. drawGraph, meanDegree, etc...
+// can use them.
 const Simulator = function(id = '#simulator') {
     const simId = id;
     const div = d3.select(simId);
@@ -39,9 +46,18 @@ const Simulator = function(id = '#simulator') {
         const nodes = G.nodes();
         let shortest_path_sum = 0;
         let path_number = 0;
-        for (let node1 of nodes.values()){
-            for (let node2 of nodes.values()){
-                let shortest_path_length = jsnx.shortestPathLength(G,{source:node1,target:node2});
+        for (let source of nodes.values()){
+            for (let target of nodes.values()){
+                // Javascript let's you create objects whose property names are inferred
+                // from the name of the variables used to create them. So, for examples,
+                // the following object:
+                //     { source, target }
+                // will be the same as
+                //     { source: source, target: target }.
+                // This makes the following line a little bit more concise.
+
+                let shortest_path_length = jsnx.shortestPathLength(G, { source, target });
+
                 shortest_path_sum += shortest_path_length;
                 path_number += 1;
             }
@@ -52,6 +68,10 @@ const Simulator = function(id = '#simulator') {
 
     const degreeDistribution = () => jsnx.degreeHistogram(G);
 
+    // This object is returned by this factory function and gives the call of Simulator
+    // access to the functions (but not the variables) defined above. This encapsulation
+    // makes it a bit easier to ensure that you don't make a mistake later and break
+    // the variables defined above, e.g. the graph variable G.
     return {
         drawGraph,
         clusteringCoefficient,
