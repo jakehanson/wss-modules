@@ -5,6 +5,8 @@
 var G= new jsnx.Graph();
 var G = jsnx.binomialGraph(6, 0.3);
 
+let d3.
+
 jsnx.draw(G, {
 	element: '#simulator',
 	weighted= false,
