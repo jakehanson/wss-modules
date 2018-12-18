@@ -48,11 +48,14 @@ const Simulator = function(G, id = '#simulator') {
         return shortestpathsum / pathnumber;
     };
 
+    const degree_distribution = () => jsnx.degreeHistogram(G);
+
     return {
         draw_graph,
         clustering_coefficient,
         mean_degree,
         average_shortest_path,
+        degree_distribution
     };
 };
 
@@ -81,6 +84,6 @@ const Simulator = function(G, id = '#simulator') {
         console.error(err);
     }
 
-    var distribution = jsnx.degreeHistogram(G);
+    const distribution = app.degree_distribution();
     console.log(distribution);
 }());
