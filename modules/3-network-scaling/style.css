@@ -49,8 +49,9 @@ footer {
     min-width: 400px;
 }
 
-
 #simulator{
     border: 1px solid black;
+    width: 400px;
+    height: 600px;
     background: #eeeeee;
 }
