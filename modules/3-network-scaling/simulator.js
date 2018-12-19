@@ -8,7 +8,6 @@
 const Simulator = function(id = '#simulator') {
     const simId = id;
     const div = d3.select(simId);
-
     let G = jsnx.binomialGraph(6, 0.3);
 
     const drawGraph = function() {
@@ -83,7 +82,11 @@ const Simulator = function(id = '#simulator') {
 
 (function() {
     let app = Simulator();
-
+    //Controls for simulator will go here
+	//d3.select("addnode").attr("value","Add Node") 
+	//d3.select("removenode").attr("value", "Remove Node")
+	//d3.select("addedge").attr("value","Add Edge")
+	//d3.select("removeedge").attr("value","Remove Edge")
     app.drawGraph();
 
     const cluster = app.clusteringCoefficient();
