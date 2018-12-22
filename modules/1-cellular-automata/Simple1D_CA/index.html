@@ -1,16 +1,35 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>1D Elementary Cellular Automata</title>
+    <script type="application/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    
+</head>
 <body>
     <h1>1D Cellular Automata</h1>
     <p>A Simple Version</p>
     <div id="setting">
-        CA Rule: <input type="number" name="CARule"/>
+        CA Rule: <input type="number" min="0" max="255" name="CARule" value="110"/>
     </div>
+    <br>
     <div id="display">
-        <svg id="CA" width="500" hight="500"></svg>
+        <svg id="CA" width="500" height="500"></svg>
     </div>
     <div id="control">
         <input type="button" value="Run"/>
+        <input type="button" value="Step"/>
+        <input type="button" value="Run to End"/>
+        <input type="button" value="Clear" onclick="clearCells()"/>
+        | Initial: 
+        <input type="button" value="Single Cell"/>
+        <input type="button" value="Random Cell"/>
         <br>
         <!-- Following is test controler -->
-        <input type="button" value="Add Random Disk"/>
+        <h3>Test</h3>
+        <input type="button" value="Random Cells" onclick="setRandomCells()"/>
     </div>
 </body>
+
+<script type="application/javascript" src="src/script.js"></script>
+
+</html>
