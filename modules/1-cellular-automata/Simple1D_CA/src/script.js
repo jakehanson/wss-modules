@@ -17,13 +17,8 @@ AddBackGround();
 setRandomCells();
 
 function clearCells(){
-    /*d3.select("#CA").selectAll('rect')
-        .transition()
-        .duration(500)
-        .attr('fill', 'gray')*/
-    d3.select("#CA").selectAll('rect')
+    d3.select("#CA").selectAll("rect[id='Cell']")
         .remove();
-    AddBackGround();
 }
 
 function setRandomCells(){
@@ -56,18 +51,6 @@ function AddBackGround(){
 
 function putCell(t, index, cellSize, color){
     d3.select("#CA")
-    /*
-    // Add shadow
-    .append('rect')
-        .attr('x', index * cellSize + cellSize * 0.05)
-        .attr('y', t * cellSize + cellSize * 0.05)
-        .attr('rx', cellSize * 0.1)
-        .attr('ry', cellSize * 0.1)
-        .attr('width', cellSize * 0.9)
-        .attr('height', cellSize * 0.9)
-        .attr('fill', '#333333');
-    */
-    d3.select("#CA")
     .append('rect')
         .attr('x', index * cellSize)
         .attr('y', t * cellSize)
@@ -76,6 +59,7 @@ function putCell(t, index, cellSize, color){
         .attr('width', cellSize * 0.9)
         .attr('height', cellSize * 0.9)
         .attr('fill', color)
+        .attr('id', 'Cell');
         //.attr('stroke', 'gray')
         //.attr('stroke-width', 1);
     return 0;
