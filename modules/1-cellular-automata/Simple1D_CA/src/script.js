@@ -17,13 +17,17 @@ AddBackGround();
 setRandomCells();
 
 function clearCells(){
-    d3.select("#CA").selectAll('rect')
+    /*d3.select("#CA").selectAll('rect')
         .transition()
         .duration(500)
-        .attr('fill', 'gray')
+        .attr('fill', 'gray')*/
+    d3.select("#CA").selectAll('rect')
+        .remove();
+    AddBackGround();
 }
 
 function setRandomCells(){
+    clearCells();
     var i;
     var j;
     var c;
