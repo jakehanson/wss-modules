@@ -58,6 +58,8 @@ footer {
 
 #controls {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
     margin: 5px 0px;
 }
+
