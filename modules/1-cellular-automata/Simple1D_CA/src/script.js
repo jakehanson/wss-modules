@@ -1,10 +1,9 @@
 // constants
 const svg_width = 500.;
 const svg_height = 500.;
-const spaceSize = 20;
 
 // variables
-
+var spaceSize = 20;
 var line0 = [];
 var current_line = [];
 var pointer = 0;
@@ -24,6 +23,7 @@ d3.select("#CA")
 // Set SVG
 
 AddBackGround();
+makeRulePlot();
 
 //setRandomCells();
 setRandomInitCells();
@@ -32,6 +32,89 @@ update_run();
 
 ////////////////////
 // Functions
+
+function makeRulePlot(){
+    var obj = d3.selectAll('#ECARule');
+    var i, j;
+    var code = [0, 0, 0];
+    var _cellSize = 15;
+    var _pendx = 10;
+    var _pendy = 10;
+
+    for (i = 0; i < 8; i++){
+        code = binCode(7 - i);
+        console.log(code);
+        _RulePlotCode(code, _pendx + i * (500 - 2 * _pendx) / 8., _pendy, _cellSize);
+        _putControlCell(7 - i, _pendx + i * (500 - 2 * _pendx) / 8. + _cellSize, _pendy + _cellSize, _cellSize);
+    }
+}
+
+function _putControlCell(stateID, x, y, size){
+    d3.selectAll('#ECARule')
+        .append('rect')
+        .attr('x', x)
+        .attr('y', y)
+        .attr('width', size)
+        .attr('height', size)
+        .attr('stroke', 'gray')
+        .attr('fill', 'white')
+        .attr('id', stateID)
+        .on('click', flipRule)
+        .on('mouseover', handleMouseOver)
+        .on('mouseout', handleMouseOut);
+}
+
+function handleMouseOver(){
+    d3.select(this).attr('stroke', '#31a8f0');
+    console.log(this['id']);
+}
+
+function handleMouseOut(){
+    d3.select(this).attr('stroke', 'gray');
+}
+
+function flipRule(){
+    return 0;
+}
+
+function _RulePlotCode(code, x, y, size){
+    var j = 0;
+    var obj = d3.selectAll('#ECARule');
+
+    for (j = 0; j < 3; j++){
+        if (code[j] == 0){
+            obj.append('rect')
+                .attr('x', x + size * j)
+                .attr('y', y)
+                .attr('width', size)
+                .attr('height', size)
+                .attr('stroke', 'gray')
+                .attr('fill', 'white');
+        } else {
+            obj.append('rect')
+                .attr('x', x + size * j)
+                .attr('y', y)
+                .attr('width', size)
+                .attr('height', size)
+                .attr('stroke', 'gray')
+                .attr('fill', 'black');
+        }
+    }
+}
+
+function binCode(x){
+    var code = [0, 0, 0];
+    var _x = x;
+    code[0] = x % 2;
+    _x = Math.floor(x / 2);
+
+    code[1] = _x % 2;
+    _x = Math.floor(_x / 2);
+
+    code[2] = _x % 2;
+    
+    return code;
+}
 
 function update_run(){
     // Update button "run", "step", and "run to end"
@@ -100,6 +183,7 @@ function putCell(t, index, cellSize, color){
         .attr('height', cellSize * 0.9)
         .attr('fill', color)
         .attr('id', 'Cell');
+        //.on('click', clearCells);
         //.attr('stroke', 'gray')
         //.attr('stroke-width', 1);
     return 0;
@@ -213,5 +297,10 @@ async function RunToEnd(sleepTime = 0){
 
 function setRule(){
     theRule = parseInt(document.getElementById("CARule").value);
+    return 0;
+}
+
+function setSize(){
+    spaceSize = parseInt(document.getElementById("CASize").value);
     return 0;
 }
