@@ -7,7 +7,6 @@
 </head>
 <body>
     <h1>1D Cellular Automata</h1>
-    <p>A Simple Version</p>
     <div id="setting">
         CA Rule: <input type="number" min="0" max="255" name="CARule" value="110" onchange="setRule()" id="CARule"/>
         Size: <input type="number" min="0" max="255" name="CASize" value="20" onchange="setSize()" id="CASize"/>
@@ -28,8 +27,8 @@
         <input type="button" value="Random Cell" onclick="setRandomInitCells()"/>
         <br>
         <!-- Following is test controler -->
-        <h3>Test</h3>
-        <input type="button" value="Random Cells" onclick="setRandomCells()"/>
+        <!--<h3>Test</h3>
+        <input type="button" value="Random Cells" onclick="setRandomCells()"/>-->
         <!-- Bug: It will create cells again -->
     </div>
 </body>

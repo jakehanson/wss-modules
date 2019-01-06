@@ -9,6 +9,7 @@ var current_line = [];
 var pointer = 0;
 var can_run = false;
 var theRule = 110;
+var RuleCode = new Int8Array(8).fill(0);
 
 ////////////////////
 // Initialize
@@ -24,6 +25,7 @@ d3.select("#CA")
 
 AddBackGround();
 makeRulePlot();
+Rule2Code();
 
 //setRandomCells();
 setRandomInitCells();
@@ -32,6 +34,31 @@ update_run();
 
 ////////////////////
 // Functions
+
+function Rule2Code(){
+    RuleCode = binCode(theRule, 8);
+    UpdateRulePlot();
+}
+
+function UpdateRulePlot(){
+    var i = 0;
+
+    for (i = 0; i < 8; i++){
+        var _cell = d3.select('#ECARule_'+i);
+        if (RuleCode[i] == 0){
+            _cell.attr('fill', 'white');
+        } else {
+            _cell.attr('fill', 'black');
+        }
+    }
+    
+}
+
+function UpdateRule(){
+    theRule = FromDigits(RuleCode);
+    document.getElementById("CARule").value = theRule;
+    return 0;
+}
 
 function makeRulePlot(){
     var obj = d3.selectAll('#ECARule');
@@ -58,7 +85,7 @@ function _putControlCell(stateID, x, y, size){
         .attr('height', size)
         .attr('stroke', 'gray')
         .attr('fill', 'white')
-        .attr('id', stateID)
+        .attr('id', 'ECARule_'+stateID)
         .on('click', flipRule)
         .on('mouseover', handleMouseOver)
         .on('mouseout', handleMouseOut);
@@ -74,6 +101,10 @@ function handleMouseOut(){
 }
 
 function flipRule(){
+    var _p = parseInt(this['id'][8]);
+    RuleCode[_p] = 1 - RuleCode[_p];
+    UpdateRulePlot();
+    UpdateRule();
     return 0;
 }
 
@@ -102,18 +133,29 @@ function _RulePlotCode(code, x, y, size){
     }
 }
 
-function binCode(x){
-    var code = [0, 0, 0];
+function binCode(x, _n = 3){
+    var code = new Int8Array(_n).fill(0);
     var _x = x;
-    code[0] = x % 2;
-    _x = Math.floor(x / 2);
+    var i = 0;
 
-    code[1] = _x % 2;
-    _x = Math.floor(_x / 2);
-
-    code[2] = _x % 2;
+    while (_x > 0){
+        if (i < _n) code[i] = _x % 2;
+        i++;
+        _x = Math.floor(_x / 2);
+    }
     
     return code;
+}
+
+function FromDigits(list, base = 2){
+    var i;
+    var num = 0;
+    var _base = 1;
+    for (i = 0; i < list.length; i++){
+        num += list[i] * _base;
+        _base = _base * base;
+    }
+    return num;
 }
 
 function update_run(){
@@ -297,6 +339,7 @@ async function RunToEnd(sleepTime = 0){
 
 function setRule(){
     theRule = parseInt(document.getElementById("CARule").value);
+    Rule2Code();
     return 0;
 }
 
