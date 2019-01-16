@@ -14,7 +14,7 @@
     <header>
         <h1>Nest Site Selection</h1>
     </header>
-    <div id="container">
+    <div id="container-1">
         <div id="instructions">
             <h2>Instructions:</h2>
             <p>
@@ -35,37 +35,63 @@
                 <dd>Stop and clear the simulation</dd>
             </dl>
         </div>
-        <div id="ca">
-            <div id="settings">
-                <div id="radius-settings">
-                    <label for="radius-slider">Radius:</label>
-                    <input type="range" min="20" max="180" id="radius-slider" name="radius-slider" />
-                    <output id="radius" name="radius" for="radius-slider"></output>
+    </div>
+    <div id="container-2">
+        <div id="nest-A">
+            <div id="nest-A-settings">
+                <div id="radius-A-settings">
+                    <label for="radius-A-slider">Radius A:</label>
+                    <input type="range" min="40" max="180" id="radius-A-slider" name="radius-A-slider" />
+                    <output id="radius-A" name="radius-A" for="radius-A-slider"></output>
                 </div>
-                <div id="aperture-settings">
-                    <label for="aperture-slider">Aperture:</label>
-                    <input type="range" min="5" max="45" id="aperture-slider" name="aperture-slider" />
-                    <output id="aperture" name="aperture" for="aperture"></output>
+                <div id="aperture-A-settings">
+                    <label for="aperture-A-slider">Aperture A:</label>
+                    <input type="range" min="25" max="60" id="aperture-A-slider" name="aperture-A-slider" />
+                    <output id="aperture-A" name="aperture-A" for="aperture-A"></output>
                 </div>                
-                <div id="speed-settings">
-                    <label for="speed-slider">Simulation Speed:</label>
-                    <input type="range" min="100" max="1000" step="10" id="speed-slider" name="speed-slider" />
-                    <output id="speed" name="speed" for="speed-slider"></output>
-                </div>
-                <div id="discovery-settings">
-                    <label for="discovery-slider">Discovery Rate:</label>
-                    <input type="range" min="10" max="90" step="5" id="discovery-slider" name="discovery-slider" />
-                    <output id="discovery" name="discovery" for="discovery-slider"></output>
-                </div>
-                <div id="colony-settings">
-                    <label for="colony-slider">Colony Size:</label>
-                    <input type="range" min="20" max="180" id="colony-slider" name="colony-slider"/>
-                    <output id="colony" name="colony" for="colony-slider"></output>
+                <div id="discovery-A-settings">
+                    <label for="discovery-A-slider">Discovery Rate A:</label>
+                    <input type="range" min="10" max="90" step="5" id="discovery-A-slider" name="discovery-A-slider" />
+                    <output id="discovery-A" name="discovery-A" for="discovery-A-slider"></output>
                 </div>
             </div>
-            <svg id="trajectory" width="400" height="400"></svg>
-<!--             <svg id="nest" width="400" height="400"></svg>
- -->            <div id="controls">
+        </div>
+        <div id="nest-B">
+            <div id="nest-B-settings">
+                <div id="radius-B-settings">
+                    <label for="radius-B-slider">Radius B:</label>
+                    <input type="range" min="40" max="180" id="radius-B-slider" name="radius-B-slider" />
+                    <output id="radius-B" name="radius-B" for="radius-B-slider"></output>
+                </div>
+                <div id="aperture-B-settings">
+                    <label for="aperture-B-slider">Aperture B:</label>
+                    <input type="range" min="25" max="60" id="aperture-B-slider" name="aperture-B-slider" />
+                    <output id="aperture-B" name="aperture-B" for="aperture-B"></output>
+                </div>                
+                <div id="discovery-B-settings">
+                    <label for="discovery-B-slider">Discovery Rate B:</label>
+                    <input type="range" min="10" max="90" step="5" id="discovery-B-slider" name="discovery-B-slider" />
+                    <output id="discovery-B" name="discovery-B" for="discovery-B-slider"></output>
+                </div>
+            </div>
+        </div>
+        <div id="global">
+            <div id="global-settings">               
+                <div id="colony-settings">
+                    <label for="colony-slider">Colony Size</label>
+                    <input type="range" min="2" max="100" step="2" id="colony-slider" name="colony-slider"/>
+                    <output id="colony" name="colony" for="colony-slider"></output>
+                </div>
+                <div id="velocity-settings">
+                    <label for="velocity-slider">Velocity</label>
+                    <input type="range" min="5" max="15" id="velocity-slider" name="velocity-slider"/>
+                    <output id="velocity" name="velocity" for="velocity-slider"></output>
+                </div>
+            </div>
+        </div>
+        <div id="arena">
+            <svg id="trajectory" width="800" height="400"></svg>
+                <div id="controls">
                 <input type="button" id="step" value="Step" />
                 <input type="button" id="start" value="Start" />
                 <input type="button" id="stop" value="Stop" disabled />
