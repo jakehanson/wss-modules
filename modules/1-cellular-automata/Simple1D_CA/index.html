@@ -1,0 +1,38 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>1D Elementary Cellular Automata</title>
+    <script type="application/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    
+</head>
+<body>
+    <h1>1D Cellular Automata</h1>
+    <div id="setting">
+        CA Rule: <input type="number" min="0" max="255" name="CARule" value="110" onchange="setRule()" id="CARule"/>
+        Size: <input type="number" min="0" max="255" name="CASize" value="20" onchange="setSize()" id="CASize"/>
+        <br>
+        <svg id="ECARule" width="500" height="60"></svg>
+    </div>
+    <br>
+    <div id="display">
+        <svg id="CA" width="500" height="500"></svg>
+    </div>
+    <div id="control">
+            <input type="button" value="Run" id="run" onclick="RunToEnd(500)"/>
+            <input type="button" value="Step" onclick="OneStep()" id="step"/>
+            <input type="button" value="Run to End" id="run_end" onclick="RunToEnd()"/>
+            <input type="button" value="Clear" onclick="clearCells()" id="clear"/>
+        | Initial: 
+        <input type="button" value="Single Cell" onclick="setSingleInitCells()"/>
+        <input type="button" value="Random Cell" onclick="setRandomInitCells()"/>
+        <br>
+        <!-- Following is test controler -->
+        <!--<h3>Test</h3>
+        <input type="button" value="Random Cells" onclick="setRandomCells()"/>-->
+        <!-- Bug: It will create cells again -->
+    </div>
+</body>
+
+<script type="application/javascript" src="src/script.js"></script>
+
+</html>

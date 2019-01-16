@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Network Builder Simulation</title>
+        <link rel="stylesheet" href="style.css" />
+        <script type="application/javascript" src="https://d3js.org/d3.v3.min.js"></script>
+        <script type="application/javascript" src="jsnetworkx.js"></script>
+        <script type="application/javascript" src="simulator.js" defer></script>
+    </head>
+
+    <body>
+        <div id="container">
+            <div id="instructions">
+                <h2>Instructions</h2>
+                <p>To add a node to the network, click the "Add Node" button, and then click where you'd like to place the node.</p>
+
+                <p>To connect two nodes, click the "Add Edge" button, and then click on each node you'd like to connect to each other.</p>
+
+                <p>To remove a node, click "Remove Node" and then click on the node you wish to remove.</p>
+
+                <p>To remove an edge, click "Remove Edge", and then click the two nodes connected by the edge you wish to remove.</p>
+
+            </div>
+            <div id="simulator"></div>
+            	<div id="controls">
+            	<input type = "button" id="addnode" value="Add a Node" />
+           		<input type = "button" id="removenode" value="Remove a Node"/>
+            	<input type = "button" id="addedge" value="Add an Edge"/>
+           		<input type = "button" id=removeedge" value="Remove an Edge"/>
+            	</div>
+        </div>
+    </body>
+</html>
