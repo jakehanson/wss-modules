@@ -1,10 +1,10 @@
 'use strict';
 
 // TO DO:
-// Ant update rules
-// Ant discovery rules
-// What happen if we initialize on top of another ant?
-// Note, I could add the global params to the SVG buttons to help w/ styling
+// Collisions between ants
+// Exit rules
+// Initialization Rules
+// Styling
 // 700 lines after update/discovery rules?
 // 800 lines after adding bells and whistles to svg
 // CSS styling
@@ -16,8 +16,6 @@ const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, 
     let y_L = (radius-r_enc)*Math.cos(aperture/2*Math.PI/180);
     let x_R = -x_L;
     let y_R = y_L;
-
-
 
     let x = 0;
     let y = radius;
@@ -50,6 +48,62 @@ const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, 
 };
 
 
+// Function to calculate time until ant hits nest wall
+const get_t_wall = function(x, y, vx, vy, R, r_enc){
+	return (-(x*vx+y*vy)+Math.sqrt(Math.pow(x*vx+y*vy,2)-(vx*vx+vy*vy)*(x*x+y*y-(R-r_enc)*(R-r_enc))))/(vx*vx+vy*vy);
+};
+
+
+// Function for moving the ants forward in time by dt
+const simple_update = function(ant_array, delta_t){
+	let num_ants = ant_array.length;
+
+	for (let i = 0; i < num_ants; ++i) {
+		ant_array[i].x += ant_array[i].vx*delta_t;
+		ant_array[i].y += ant_array[i].vy*delta_t;
+	}
+};
+
+// Define function for updating ant locations and correctly switching velocity
+const wall_collision = function(cx, cy, ant_array, delta_t, i, velocity){
+
+    let dt = 1/velocity; // this is the timestep in s (we only move 1 px max)
+
+	// Next, we update the velocity of the ant colliding with the wall
+	let x = ant_array[i].x-cx;
+	let y = ant_array[i].y-cy;
+	let vx = ant_array[i].vx;
+	let vy = ant_array[i].vy;
+
+	let x_0 = x-vx*delta_t; // old x location
+	let y_0 = y-vy*delta_t; // old y location
+
+	let v_0x = (x-x_0)/delta_t; // initial x_velocity
+	let v_0y = (y-y_0)/delta_t; // initial y_velocity
+	let v_mag = Math.sqrt(v_0x**2+v_0y**2); // initial velocity
+
+
+
+	if((x_0 >= 0 && y_0 <= 0) || (x_0 >= 0 && y_0 > 0)){
+		let angle_1 = Math.atan(y/x);
+		let angle_2 = Math.atan(y_0/x_0);
+		let final_angle = 2*angle_1-angle_2;
+		let x_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.cos(final_angle);
+		let y_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.sin(final_angle);
+		ant_array[i].vx = (x_temp-x)/delta_t;
+		ant_array[i].vy = (y_temp-y)/delta_t;
+	} else {
+		let angle_1 = Math.PI + Math.atan(y/x);
+		let angle_2 = Math.PI + Math.atan(y_0/x_0);
+		let final_angle = 2*angle_1-angle_2; // probably not scoped correctly
+		let x_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.cos(final_angle);
+		let y_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.sin(final_angle);
+		ant_array[i].vx = (x_temp-x)/delta_t;
+		ant_array[i].vy = (y_temp-y)/delta_t;
+	}
+
+};
+
 /**
  * The `App` factory function creates an object to encapsulate the core logic
  * for the application.  The object is created given the nest geometries,
@@ -80,9 +134,12 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 
     const fire = function() {
 
+    	let t = 0; // keeps track of time between timesteps
+    	let t_c = dt; // time until next event
+    	let index = 0; // this is the index of the ant hitting the wall next
 	    let num_ants = ant_array.length;
 
-	    // Check if we should add new ants
+	    // Check if we need to add new ants
 	    if (timestep % rate_A == 0 && num_ants < colony_size) {
 	    	// Make sure this isn't the last ant
 	    	if (num_ants != colony_size - 1){
@@ -92,8 +149,8 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 	    		if (timestep % rate_B != 0) {
 		    		init_ant(cx_A, cy_A, radius_A, r_enc, aperture_A, ant_array, velocity, timestep);
 	    		} else {
-	    			let rand_nest = Math.floor(Math.random()*2); // randomly choose A or B
-
+	    			// randomly choose which nest the last ant goes to
+	    			let rand_nest = Math.floor(Math.random()*2);
 	    			if (rand_nest == 0) {
 			    		init_ant(cx_A, cy_A, radius_A, r_enc, aperture_A, ant_array, velocity, timestep); // add to nest A
 	    			} else {
@@ -107,54 +164,66 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 		    init_ant(cx_B, cy_B, radius_B, r_enc, aperture_B, ant_array,velocity, timestep); // add ant to nest B
 	    }
 
-	    // Update Ant Position
-	    for (let i = 0; i < num_ants; ++i) {
-	        ant_array[i].x += ant_array[i].vx*dt; 
-	        ant_array[i].y += ant_array[i].vy*dt;
+	    // Get time until next collision
+	    while (t < dt) {
 
-	        // Check if we stepped out of bounds, in which case we reverse our velocity
-	        if (ant_array[i].x < width/2) {
-	        	// We are in nest A
-	        	let dist = Math.pow((Math.pow(ant_array[i].x-cx_A,2)+Math.pow(ant_array[i].y-cy_A,2)),0.5);
-	        	if (dist > radius_A-r_enc) {
+	    	let t_remaining = dt-t; // initialize time until next rendering
+	    	let t_min = t_remaining; // variable to keep track of min time
 
-	        		// Did we hit a wall?
-	        		let angle = Math.atan((cx_A-ant_array[i].x)/(cy_A-ant_array[i].y))*180/Math.PI;  // current angular location in degrees
-					let delta = Math.atan(r_enc/radius_A); // Ant must clear the edge
-    				delta = delta*180/Math.PI; // convert to degrees
+	    	// Loop over ants
+    		for (let i = 0; i < num_ants; ++i) {
 
-	        		// check if our angle is in the critical region
-	        		if (angle < aperture_A - delta && angle > -aperture_A + delta){
-	        			// Then we are inside the critical region
-	        			//console.log("In critical region A");
-	        		} else {
-	        			// Run a wall update
-	        			console.log("OoB A");
-	        		}
-	        	}
-	        } else {
-	        	// We are in nest B
-	        	let dist = Math.pow((Math.pow(ant_array[i].x-cx_B,2)+Math.pow(ant_array[i].y-cy_B,2)),0.5);
-	        	if (dist > radius_B-r_enc) {
+    			// Calculate time until wall collision
+		        if (ant_array[i].x < width/2) {
+		        	// Nest A update
+			    	let x = ant_array[i].x-cx_A;
+			    	let y = ant_array[i].y-cy_A;
+			    	let R = radius_A;
+			        t_c = get_t_wall(x, y, ant_array[i].vx, ant_array[i].vy, R, r_enc);
+		        } else {
+			    	let x = ant_array[i].x-cx_B;
+			    	let y = ant_array[i].y-cy_B;
+			    	let R = radius_B;
+			        t_c = get_t_wall(x, y, ant_array[i].vx, ant_array[i].vy, R, r_enc);
+		        }
 
-	        		// Did we hit a wall?
-	        		let angle = Math.atan((cx_B-ant_array[i].x)/(cy_B-ant_array[i].y))*180/Math.PI;  // current angular location in degrees
-					let delta = Math.atan(r_enc/radius_B); // Ant must clear the edge
-    				delta = delta*180/Math.PI; // convert to degrees
+		        if (t_c < t_min && t_c > 1e-12){
+		        	console.log("Time until wall collision ", t_c);
+		        	t_min = t_c;
+		        	index = i; // this is the index of the ant colliding with wall next
+		        }
 
-	        		// check if our angle is in the critical region
-	        		if (angle < aperture_B - delta && angle > -aperture_B + delta){
-	        			// Then we are inside the critical region
-	        			//console.log("In critical region B");
-	        		} else {
-	        			// Run a wall update
-	        			console.log("OoB B");
-	        		}
-	        	}
-	        }
-	    }
+    		}
+
+    		// So all I need to do is update positions and add t_min to t
+    		// Need a method to update positions for a wall update, ant update, and simple update
+
+			simple_update(ant_array,t_min); // step everything forward in time by t_min
+			t += t_min; // update time 
+
+			// If t_min did not equal t_remaining then we had a collision of some sort
+    		if (t_min != t_remaining){
+    			
+    			// switch the velocity vector of the ant in question
+				if (ant_array[index].x < width/2) {
+					// run wall update with nest A
+					console.log("Running wall collision",t,t_min);
+					wall_collision(cx_A, cy_A, ant_array, t_min, index, velocity);
+				} else {
+					// run wall update with nest B
+					console.log("Running wall collision",t,t_min);
+					wall_collision(cx_B, cy_B, ant_array, t_min, index, velocity);
+				}
+
+    		}
+
+    		if (t_min < 1e-6) {
+    			break;
+    		}
+
+	    };
+
 	};
-
 
 
     // The render method take care of rendering a single timestep of the
@@ -205,21 +274,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
     const step = function() {
 
         timestep += 1; // update timestep (not the same as the time..)
-
-
         fire(ant_array);
-
-        // Update the ants
-
-        // // Update the ants given the rule
-        // if (timestep%disc_rate == 0) {
-        //     ant_array.push({
-        //         "cx": center_x,
-        //         "cy": center_y-radius
-        //     });
-        // }
-        // fire(ant_array); // update ants
-
         render(); // render the initial state
 
     };
@@ -452,14 +507,14 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 (function() {
     // Create the initial application state
     const app = App({
-        radius_A: 110, // nest A radius
-        radius_B: 110, // nest B radius
+        radius_A: 40, // nest A radius
+        radius_B: 180, // nest B radius
         aperture_A: 35, // nest A opening angle
         aperture_B: 35, // nest B opening angle
-        rate_A: 10, // seconds between discovery
-        rate_B: 10, // seconds between discovery
+        rate_A: 90, // seconds between discovery
+        rate_B: 90, // seconds between discovery
         colony_size: 50, // total number of ants
-        velocity: 10 // pixels/sec
+        velocity: 15 // pixels/sec
     });
 
     // Register onclick handlers to the step, start, stop and restart buttons
