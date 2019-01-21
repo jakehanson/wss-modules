@@ -5,9 +5,12 @@ var pxSize = 500;
 var matSize = 16;
 var cellSize = pxSize / matSize;
 var bondRatio = 0.05;
+var mat = new matrix(matSize);
+var next_mat = new matrix(matSize);
 
 // # INIT
-init();
+//init();
+caMap = new CA2D(16, 400, 'CA');
 
 // # FUNCTIONS
 
@@ -58,18 +61,28 @@ function putInitCell(x, y, _pxSize, _matSize){
 
 // # Set Cells
 
+function setCell(i, j, color){
+    // color: 0 or 1. 0: white, 1: black
+    mat[i][j] = color;
+    if (color == 0){
+        d3.select("#CA").select("rect[id='Cell_" + i + ', ' + j + "']")
+            .attr('fill', 'white');
+    } else {
+        d3.select("#CA").select("rect[id='Cell_" + i + ', ' + j + "']")
+            .attr('fill', 'black');
+    }
+}
+
 function setRandomCells(p = 0.5){
     var i, j;
     for (i = 0; i < matSize; i++){
         for (j = 0; j < matSize; j++){
             if (Math.random() < p){
                 // Set to black
-                d3.select("#CA").select("rect[id='Cell_" + i + ', ' + j + "']")
-                    .attr('fill', 'black');
+                setCell(i, j, 1);
             } else {
                 // Set to white
-                d3.select("#CA").select("rect[id='Cell_" + i + ', ' + j + "']")
-                    .attr('fill', 'white');
+                setCell(i, j, 0);
             }
             
         }
