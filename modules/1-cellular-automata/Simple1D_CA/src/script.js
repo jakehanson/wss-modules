@@ -11,6 +11,7 @@ var can_run = false;
 var theRule = 110;
 var RuleCode = new Int8Array(8).fill(0);
 
+
 ////////////////////
 // Initialize
 
