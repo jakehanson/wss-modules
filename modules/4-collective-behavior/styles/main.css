@@ -54,18 +54,23 @@ footer {
     width: 800px;
     padding: 0px 0px;
     text-align: left;
+    display: flex;
 }
 
 #nest-A {
     width: 400px;
     padding: 0px 0px;
-    text-align: left;
+    text-align: center;
 }
 
 #nest-B {
     width: 400px;
     padding: 0px 0px;
-    text-align: right;
+    text-align: center;
+}
+
+#arena {
+    text-align: center;
 }
 
 #settings {
