@@ -42,7 +42,8 @@ const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, 
         "x": cx-x,
         "y": cy-y,
         "vx": v_x,
-        "vy": v_y
+        "vy": v_y,
+        "color": "black"
     });
 
 };
@@ -82,25 +83,30 @@ const wall_collision = function(cx, cy, ant_array, delta_t, i, velocity){
 	let v_0y = (y-y_0)/delta_t; // initial y_velocity
 	let v_mag = Math.sqrt(v_0x**2+v_0y**2); // initial velocity
 
+	var angle_1; 
+	var angle_2;
+	var final_angle; 
 
-
-	if((x_0 >= 0 && y_0 <= 0) || (x_0 >= 0 && y_0 > 0)){
-		let angle_1 = Math.atan(y/x);
-		let angle_2 = Math.atan(y_0/x_0);
-		let final_angle = 2*angle_1-angle_2;
-		let x_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.cos(final_angle);
-		let y_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.sin(final_angle);
-		ant_array[i].vx = (x_temp-x)/delta_t;
-		ant_array[i].vy = (y_temp-y)/delta_t;
+	// Get angle to initial location
+	if( (x_0 >= 0 && y_0 <= 0) || (x_0 >= 0 && y_0 > 0) ){
+		angle_2 = Math.atan(y_0/x_0);
 	} else {
-		let angle_1 = Math.PI + Math.atan(y/x);
-		let angle_2 = Math.PI + Math.atan(y_0/x_0);
-		let final_angle = 2*angle_1-angle_2; // probably not scoped correctly
-		let x_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.cos(final_angle);
-		let y_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.sin(final_angle);
-		ant_array[i].vx = (x_temp-x)/delta_t;
-		ant_array[i].vy = (y_temp-y)/delta_t;
+		angle_2 = Math.PI + Math.atan(y_0/x_0);
 	}
+
+	// Get angle to current location
+	if( (x >= 0 && y <= 0) || (x >= 0 && y > 0) ){
+		angle_1 = Math.atan(y/x);
+	} else {
+		angle_1 = Math.PI + Math.atan(y/x);
+	}
+
+	// Get angle to final location
+	final_angle = 2*angle_1-angle_2;
+	let x_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.cos(final_angle);
+	let y_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.sin(final_angle);
+	ant_array[i].vx = (x_temp-x)/delta_t;
+	ant_array[i].vy = (y_temp-y)/delta_t;
 
 };
 
@@ -188,7 +194,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 		        }
 
 		        if (t_c < t_min && t_c > 1e-12){
-		        	console.log("Time until wall collision ", t_c);
+		        	//console.log("Time until wall collision ", t_c);
 		        	t_min = t_c;
 		        	index = i; // this is the index of the ant colliding with wall next
 		        }
@@ -207,11 +213,11 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
     			// switch the velocity vector of the ant in question
 				if (ant_array[index].x < width/2) {
 					// run wall update with nest A
-					console.log("Running wall collision",t,t_min);
+					//console.log("Running wall collision",t,t_min);
 					wall_collision(cx_A, cy_A, ant_array, t_min, index, velocity);
 				} else {
 					// run wall update with nest B
-					console.log("Running wall collision",t,t_min);
+					//console.log("Running wall collision",t,t_min);
 					wall_collision(cx_B, cy_B, ant_array, t_min, index, velocity);
 				}
 
@@ -253,7 +259,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 
         // If there aren't any ants make an ant at the top of each nest
 	    if (timestep == 0) {
-		    ant_array = []; // empty array to hold ants
+		    ant_array = []; // empty array to hold all ants
 		    init_ant(cx_A, cy_A, radius_A, r_enc, aperture_A, ant_array, velocity, timestep);
 		    init_ant(cx_B, cy_B, radius_B, r_enc, aperture_B, ant_array,velocity, timestep);
 	    }
@@ -265,8 +271,33 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         .merge(ant_plot)
         .attr("cx", (d) => d.x)
         .attr("cy", (d) => d.y)
-        .attr("r", r_enc);
+        .attr("r", r_enc)
+        .style("fill", (d) => d.color);
         ant_plot.exit().remove();
+
+        // Draw Progress Bars
+        /* The actual bar with the progress */
+
+// .bar {
+//    display: block;
+//    overflow: hidden;
+//    height: 18px;
+//    width: 0px;
+//    border: 1px solid rgba(0, 0, 0, 0.5);
+//    border-radius: 10px;
+//    margin-bottom: 5px;
+//    margin-left: 10px;
+//    box-shadow: 1px 1px 1px #888888;
+// }
+
+/* The div in which we append all the bars */
+// .progress-bars {
+//    width: 350px;
+//    min-height: 100px;
+//    margin-bottom: 50px;
+//    padding: 25px 0 0 25px;
+//    float: left;
+// }
 
     };
 

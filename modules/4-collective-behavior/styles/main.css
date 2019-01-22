@@ -45,14 +45,27 @@ footer {
 }
 
 #instructions {
-    width: 45%;
+    width: 85%;
     min-width: 400px;
+    text-align: center;
 }
 
 #nest {
     width: 800px;
     padding: 0px 0px;
-    text-align: center;
+    text-align: left;
+}
+
+#nest-A {
+    width: 400px;
+    padding: 0px 0px;
+    text-align: left;
+}
+
+#nest-B {
+    width: 400px;
+    padding: 0px 0px;
+    text-align: right;
 }
 
 #settings {
