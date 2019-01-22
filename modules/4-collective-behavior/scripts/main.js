@@ -1,46 +1,58 @@
 'use strict';
 
 // TO DO:
-// Collisions between ants
-// Exit rules
 // Initialization Rules
+// Collisions between ants
+// Ending the simulation
 // Styling
 // 700 lines after update/discovery rules?
 // 800 lines after adding bells and whistles to svg
-// CSS styling
 
 const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, timestep) {
 
-	// First, calculate the x,y locations of nest edges so we can clear them
-    let x_L = -(radius-r_enc)*Math.sin(aperture/2*Math.PI/180);
-    let y_L = (radius-r_enc)*Math.cos(aperture/2*Math.PI/180);
-    let x_R = -x_L;
-    let y_R = y_L;
+    var x,y; // variable to store location
+    var vx,vy; // variable to store velocity 
+    let x_L = -(radius-r_enc)*Math.sin(aperture/2*Math.PI/180); // x-location of left boundary
+	let y_L = (radius-r_enc)*Math.cos(aperture/2*Math.PI/180);  // y-location of left boundary
+	let x_R = -x_L;
+	let y_R = y_L;
 
-    let x = 0;
-    let y = radius;
+	aperture = aperture/180*Math.PI; // we are going to use radians here
 
-	// Start subsquent ants randomly in the aperture
-    if (timestep != 0) {
-    	let delta = Math.atan(r_enc/radius); // Ant must clear the edge
-    	delta = delta*180/Math.PI; // convert to degrees
-    	let rand_angle = (-aperture/2 + delta + Math.random()*(aperture-2*delta))*Math.PI/180; // puts us in [-a/2+delta, a/2-delta] rad
-    	x = radius*Math.sin(rand_angle);
-    	y = radius*Math.cos(rand_angle);
+    // If it is the first nest, start it in the center of the aperture
+    if (timestep == 0) {
+    	x = 0;
+    	y = -radius;    
+
+	// Subsequent ants enter at a random location	
+    } else {
+    	let delta = Math.abs(Math.atan(r_enc/radius)); // as close to the edge as an ant can get
+    	let theta_L = 3*Math.PI/2-aperture/2+delta; // left starting angle
+    	let theta_R = 3*Math.PI/2+aperture/2-delta; // right starting angle
+    	let rand_angle = theta_L+Math.random()*(theta_R-theta_L); // put us somewhere between theta_L and theta_R
+    	x = radius*Math.cos(rand_angle);
+    	y = radius*Math.sin(rand_angle);
     }
 
-    // Calculate Clearance angles
-    let alpha = Math.atan((y-y_L)/Math.abs(x_L-x));
-    let beta = Math.atan((y-y_R)/(x_R-x));
+    // Calculate Clearance angles for heading
+    let alpha = Math.abs(Math.atan((y-y_R)/(x_R-x)));
+    let beta = Math.abs(Math.atan((y-y_L)/Math.abs(x_L-x)));
+    let launch_angle = alpha + Math.random(Math.PI-beta-alpha); // randomly puts us in [alpha, PI-beta]
+    let v_x = velocity*Math.cos(launch_angle);
+    let v_y = velocity*Math.sin(launch_angle);
 
-    let launch_angle = Math.PI/2+alpha+Math.random()*(Math.PI-(alpha+beta)); // randomly puts us in [pi/2+alpha,3pi/2-beta]
-    let v_x = velocity*Math.sin(launch_angle);
-    let v_y = -velocity*Math.cos(launch_angle);
+
+    // Block the entrance for the moment
+    // if (timestep == 0) {
+	   //  v_x = 0; // block the entrance
+	   //  v_y = 0; // block the entrance
+    // }
+
 
     // Append x,y position and velocity
     ant_array.push({
-        "x": cx-x,
-        "y": cy-y,
+        "x": cx+x,
+        "y": cy+y,
         "vx": v_x,
         "vy": v_y,
         "color": "black"
@@ -66,7 +78,7 @@ const simple_update = function(ant_array, delta_t){
 };
 
 // Define function for updating ant locations and correctly switching velocity
-const wall_collision = function(cx, cy, ant_array, delta_t, i, velocity){
+const wall_collision = function(cx, cy, ant_array, delta_t, i, velocity, r_enc, aperture, width, height){
 
     let dt = 1/velocity; // this is the timestep in s (we only move 1 px max)
 
@@ -105,8 +117,26 @@ const wall_collision = function(cx, cy, ant_array, delta_t, i, velocity){
 	final_angle = 2*angle_1-angle_2;
 	let x_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.cos(final_angle);
 	let y_temp = Math.sqrt(Math.pow(x_0,2)+Math.pow(y_0,2))*Math.sin(final_angle);
-	ant_array[i].vx = (x_temp-x)/delta_t;
-	ant_array[i].vy = (y_temp-y)/delta_t;
+
+	// Check if we exited
+	angle_1 = (angle_1*180/Math.PI);  // convert to degrees
+	angle_1 = (angle_1%360+360)%360;  // put it in [0,360]
+	if (angle_1 > 270-aperture/2. && angle_1 < 270 + aperture/2){
+		ant_array[i].vx = 0;
+		ant_array[i].vy = 0;
+		// Send ants to their respective sidelines
+        if (ant_array[i].x < width/2) {
+			ant_array[i].x = r_enc;
+			ant_array[i].y = height - r_enc*(1+i);
+        } else {
+			ant_array[i].x = width - r_enc;
+			ant_array[i].y = height - r_enc*(1+i);
+        }   
+    // If not, update heading
+	} else {
+		ant_array[i].vx = (x_temp-x)/delta_t;
+		ant_array[i].vy = (y_temp-y)/delta_t;		
+	}
 
 };
 
@@ -214,11 +244,11 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 				if (ant_array[index].x < width/2) {
 					// run wall update with nest A
 					//console.log("Running wall collision",t,t_min);
-					wall_collision(cx_A, cy_A, ant_array, t_min, index, velocity);
+					wall_collision(cx_A, cy_A, ant_array, t_min, index, velocity, r_enc, aperture_A, width, height);
 				} else {
 					// run wall update with nest B
 					//console.log("Running wall collision",t,t_min);
-					wall_collision(cx_B, cy_B, ant_array, t_min, index, velocity);
+					wall_collision(cx_B, cy_B, ant_array, t_min, index, velocity, r_enc, aperture_B, width, height);
 				}
 
     		}
@@ -276,28 +306,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         ant_plot.exit().remove();
 
         // Draw Progress Bars
-        /* The actual bar with the progress */
-
-// .bar {
-//    display: block;
-//    overflow: hidden;
-//    height: 18px;
-//    width: 0px;
-//    border: 1px solid rgba(0, 0, 0, 0.5);
-//    border-radius: 10px;
-//    margin-bottom: 5px;
-//    margin-left: 10px;
-//    box-shadow: 1px 1px 1px #888888;
-// }
-
-/* The div in which we append all the bars */
-// .progress-bars {
-//    width: 350px;
-//    min-height: 100px;
-//    margin-bottom: 50px;
-//    padding: 25px 0 0 25px;
-//    float: left;
-// }
+        // One each for remaining ants, nest A transporters, nest b transporters
 
     };
 
@@ -321,8 +330,8 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         d3.select('#radius-B-slider').attr('disabled',true);
         d3.select('#aperture-B-slider').attr('disabled',true);
         d3.select('#discovery-B-slider').attr('disabled',true);
-        d3.select('#colony-slider').attr('disabled',true);
-        d3.select('#velocity-slider').attr('disabled',true);
+        // d3.select('#colony-slider').attr('disabled',true);
+        // d3.select('#velocity-slider').attr('disabled',true);
 
 
         // Enable the stop button
@@ -351,8 +360,8 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
             d3.select('#radius-B-slider').attr('disabled',null);
             d3.select('#aperture-B-slider').attr('disabled',null);
             d3.select('#discovery-B-slider').attr('disabled',null);
-            d3.select('#colony-slider').attr('disabled',null);
-            d3.select('#velocity-slider').attr('disabled',null);
+            // d3.select('#colony-slider').attr('disabled',null);
+            // d3.select('#velocity-slider').attr('disabled',null);
 
             // Disable the stop button
             d3.select('#stop').attr('disabled', true);
@@ -545,7 +554,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         rate_A: 90, // seconds between discovery
         rate_B: 90, // seconds between discovery
         colony_size: 50, // total number of ants
-        velocity: 15 // pixels/sec
+        velocity: 25 // pixels/sec
     });
 
     // Register onclick handlers to the step, start, stop and restart buttons
@@ -601,17 +610,17 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
     d3.select('#discovery-B').html(`${app.rate_B} steps/ant`);
 
     // Register an oninput handler to the colony slider, and set the initial value
-    d3.select('#colony-slider').on('input', function() {
-        app.colony_size = parseInt(this.value);
-    }).attr('value', `${app.colony_size} ants`);
-    // Set the slider's initial label
-    d3.select('#colony').html(`${app.colony_size} ants`);
+    // d3.select('#colony-slider').on('input', function() {
+    //     app.colony_size = parseInt(this.value);
+    // }).attr('value', `${app.colony_size} ants`);
+    // // Set the slider's initial label
+    // d3.select('#colony').html(`${app.colony_size} ants`);
 
-    // Register an oninput handler to the velocity slider, and set the initial value
-    d3.select('#velocity-slider').on('input', function() {
-        app.velocity = parseInt(this.value);
-    }).attr('value', `${app.velocity} pixels/sec`);
-    // Set the slider's initial label
-    d3.select('#velocity').html(`${app.velocity} pixels/sec`);
+    // // Register an oninput handler to the velocity slider, and set the initial value
+    // d3.select('#velocity-slider').on('input', function() {
+    //     app.velocity = parseInt(this.value);
+    // }).attr('value', `${app.velocity} pixels/sec`);
+    // // Set the slider's initial label
+    // d3.select('#velocity').html(`${app.velocity} pixels/sec`);
 
 }());
