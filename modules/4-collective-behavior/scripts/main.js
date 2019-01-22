@@ -128,10 +128,12 @@ const wall_collision = function(cx, cy, ant_array, delta_t, i, velocity, r_enc, 
         if (ant_array[i].x < width/2) {
 			ant_array[i].x = r_enc;
 			ant_array[i].y = height - r_enc*(1+i);
+            // Update progress bar
         } else {
 			ant_array[i].x = width - r_enc;
 			ant_array[i].y = height - r_enc*(1+i);
-        }   
+            // Update progress bar
+        } 
     // If not, update heading
 	} else {
 		ant_array[i].vx = (x_temp-x)/delta_t;
@@ -305,6 +307,10 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         .style("fill", (d) => d.color);
         ant_plot.exit().remove();
 
+        d3.select("#left-prog").attr("max", 100);
+        d3.select("#right-prog").attr("max", 100);
+        d3.select("#left-prog").attr("value", 10);
+        d3.select("#right-prog").attr("value", 10);
         // Draw Progress Bars
         // One each for remaining ants, nest A transporters, nest b transporters
 

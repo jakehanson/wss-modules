@@ -69,8 +69,26 @@ footer {
     text-align: center;
 }
 
+#left-prog {
+    width: 300px;
+    transform: rotate(-90deg);
+    margin: 0px 0px;
+}
+
+#right-prog {
+    width: 300px;
+    transform: rotate(-90deg);
+    margin: 0px 0px;
+}
+
 #arena {
     text-align: center;
+}
+
+#prog-svg-prog {
+    display: flex;
+    align-items: center;
+    justify-content: center
 }
 
 #settings {

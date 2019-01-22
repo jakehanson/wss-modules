@@ -75,8 +75,12 @@
         </div>
     </div> -->
     <div id="arena">
-        <svg id="trajectory" width="800" height="400"></svg>
-            <div id="controls">
+        <div id="prog-svg-prog">
+            <progress id="left-prog"></progress>
+            <svg id="trajectory" width="800" height="400"></svg>
+            <progress id="right-prog"></progress>
+        </div>
+        <div id="controls">
             <input type="button" id="step" value="Step" />
             <input type="button" id="start" value="Start" />
             <input type="button" id="stop" value="Stop" disabled />
