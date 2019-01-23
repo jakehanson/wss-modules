@@ -46,13 +46,33 @@ footer {
     text-align: left;
     display: flex;
     align-items: flex-end;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .nest-settings {
-    width: 416px;
+    width: 400px;
     padding: 0px 0px;
     margin: 0px 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.nest-controls {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.nest-controls label {
+    width: 120px;
+}
+
+.nest-controls input {
+    width: 180px;
+}
+
+.nest-controls output {
+    width: 75px;
 }
 
 .progress-bar {
