@@ -9,6 +9,7 @@
 // Add ant graphic
 // Add winning nest procedure
 // Smooth progress transition?
+// Pad under settings 
 
 // 700 lines after update/discovery rules?
 // 800 lines after adding bells and whistles to svg
@@ -502,7 +503,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
             rate_A = n;
 
             // Update the slider's label
-            d3.select('#discovery-A').html(`${rate_A} steps/ant`);
+            d3.select('#discovery-A').html(`${rate_A} s/ant`);
 
             // restart
             this.restart();
@@ -521,7 +522,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
             rate_B = n;
 
             // Update the slider's label
-            d3.select('#discovery-B').html(`${rate_B} steps/ant`);
+            d3.select('#discovery-B').html(`${rate_B} s/ant`);
 
             // restart
             this.restart();
@@ -625,14 +626,14 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         app.rate_A = parseInt(this.value);
     }).attr('value', `${app.rate_A}`);
     // Set the slider's initial label
-    d3.select('#discovery-A').html(`${app.rate_A} steps/ant`);
+    d3.select('#discovery-A').html(`${app.rate_A} s/ant`);
 
     // Register an oninput handler to the discovery rate B slider, and set the initial value
     d3.select('#discovery-B-slider').on('input', function() {
         app.rate_B = parseInt(this.value);
     }).attr('value', `${app.rate_B}`);
     // Set the slider's initial label
-    d3.select('#discovery-B').html(`${app.rate_B} steps/ant`);
+    d3.select('#discovery-B').html(`${app.rate_B} s/ant`);
 
     // Register an oninput handler to the colony slider, and set the initial value
     // d3.select('#colony-slider').on('input', function() {

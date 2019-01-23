@@ -12,29 +12,40 @@
 </head>
 <body>
     <header>
-        <h1>Nest Site Selection</h1>
+        <h1>Collective Behavior</h1>
     </header>
     <div id="instructions">
-        <h2>Instructions:</h2>         
+        <h2> Instructions </h2>
         <p>
-            See how the geometry of the environment can affect the ability for a colony to reach quorum at a given nest. Parameters such as radius, aperture size, and entry rate can be changed via the toggle bars above each nest.
+            In this simulation, you will be playing with a stripped down version of nest site selection in Temnothorax ant colonies. Your goal is to reverse engineer the rule by which the colony comes to a collective decision. As you will see, there is a progress bar to the left and right of the arena that keeps track of how close a colony is to choosing a given nest. When the progress bar fills up, a consensus decision has been reached. To aid in your understanding, a list of helpful questions is provided.
         </p>
+    <div id="questions">
+        <h2> Questions </h2>   
+        <OL>
+        <li> What does the ant color represent? </li>
+        <li> When does the progress bar for a given nest increase? </li>
+        <li> Use your answers from questions 1-2 to reverse engineer the "rule" that is being used to choose between nests. What is it?</li>  
+        <li>  How does the nest geometry affect the outcome of the collective decision given this rule? Specifically, will the colony choose a smaller or larger nest? What about a smaller or larger aperture size? </li>
+        <li> How might evolution "program" individual-level behavior in order to select nests with a specific geometry?  </li>
+        </OL>
+        </p>
+    </div>
     </div>
     <div id="nest">
         <div class="nest-settings" id="nest-A-settings">
             <h3>Nest A Settings</h3>
             <div class="nest-controls" id="radius-A-settings">
-                <label for="radius-A-slider">Radius A:</label>
+                <label for="radius-A-slider">Radius:</label>
                 <input type="range" min="40" max="180" id="radius-A-slider" name="radius-A-slider" />
                 <output id="radius-A" name="radius-A" for="radius-A-slider"></output>
             </div>
             <div class="nest-controls" id="aperture-A-settings">
-                <label for="aperture-A-slider">Aperture A:</label>
+                <label for="aperture-A-slider">Aperture:</label>
                 <input type="range" min="25" max="60" id="aperture-A-slider" name="aperture-A-slider" />
                 <output id="aperture-A" name="aperture-A" for="aperture-A"></output>
             </div>                
             <div class="nest-controls" id="discovery-A-settings">
-                <label for="discovery-A-slider">Discovery Rate A:</label>
+                <label for="discovery-A-slider">Discovery Rate:</label>
                 <input type="range" min="10" max="90" step="5" id="discovery-A-slider" name="discovery-A-slider" />
                 <output id="discovery-A" name="discovery-A" for="discovery-A-slider"></output>
             </div>
@@ -42,17 +53,17 @@
         <div class="nest-settings" id="nest-B-settings">
             <h3>Nest B Settings</h3>
             <div class="nest-controls" id="radius-B-settings">
-                <label for="radius-B-slider">Radius B:</label>
+                <label for="radius-B-slider">Radius:</label>
                 <input type="range" min="40" max="180" id="radius-B-slider" name="radius-B-slider" />
                 <output id="radius-B" name="radius-B" for="radius-B-slider"></output>
             </div>
             <div class="nest-controls" id="aperture-B-settings">
-                <label for="aperture-B-slider">Aperture B:</label>
+                <label for="aperture-B-slider">Aperture:</label>
                 <input type="range" min="25" max="60" id="aperture-B-slider" name="aperture-B-slider" />
                 <output id="aperture-B" name="aperture-B" for="aperture-B"></output>
             </div>                
             <div class="nest-controls" id="discovery-B-settings">
-                <label for="discovery-B-slider">Discovery Rate B:</label>
+                <label for="discovery-B-slider">Discovery Rate:</label>
                 <input type="range" min="10" max="90" step="5" id="discovery-B-slider" name="discovery-B-slider" />
                 <output id="discovery-B" name="discovery-B" for="discovery-B-slider"></output>
             </div>
