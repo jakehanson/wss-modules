@@ -9,9 +9,53 @@
     </head>
 
     <body>
-        <div id="container">
-            <div id="controls"></div>
-            <div id="simulator"></div>
+        <header>
+            <h1>Network Scaling?</h1>
+        </header>
+        <div class="block block--centered">
+            <h2 class="block__header">Instructions</h2>
+            <p class="block_par">This is what you should do...</p>
         </div>
+        <div class="block block--bottom">
+            <div class="pane">
+                <div class="segment">
+                    <h3 class="segment__header">Controls</h3>
+                    <div class="parameter parameter--first">
+                        <label for="nodes" class="parameter__label">Number of Nodes:</label>
+                        <input type="range" class="parameter__range" name="nodes" />
+                        <output for="nodes" class="parameter__output"></output>
+                    </div>
+
+                    <div class="mechanism">
+                        <input type="radio" class="mechanism__radio" name="gen-mech" value="erdos-renyi" />
+                        <label for="erdos-renyi" class="mechanism__label">Erd&ouml;s-R&eacute;nyi</label>
+                    </div>
+
+                    <div class="parameter parameter--mechanism">
+                        <label for="p" class="parameter__label">p:</label>
+                        <input type="range" class="parameter__range" name="p" />
+                        <output for="p" class="parameter__output"></output>
+                    </div>
+
+                    <div class="mechanism">
+                        <input type="radio" class="mechanism__radio" name="gen-mech" value="barabasi-albert" />
+                        <label for="barabasi-albert" class="mechanism__label">Barabasi-Albert</label>
+                    </div>
+
+                    <div class="parameter parameter--mechanism">
+                        <label for="k" class="parameter__label">k:</label>
+                        <input type="range" class="parameter__range" name="k" />
+                        <output for="k" class="parameter__output"></output>
+                    </div>
+                </div>
+                <div class="segment segment--bottom">
+                    <h3 class="segment__header">Properties</h3>
+                </div>
+            </div>
+            <div class="pane pane--right" id="simulator"></div>
+        </div>
+        <footer>
+            <p>Copyright © 2019, <a href="https://emergence.asu.edu">Emergence@ASU</a></p>
+        </footer>
     </body>
 </html>
