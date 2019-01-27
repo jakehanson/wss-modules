@@ -4,7 +4,7 @@
         <title>Network Builder Simulation</title>
         <link rel="stylesheet" href="style.css" />
         <script type="application/javascript" src="https://d3js.org/d3.v3.min.js"></script>
-        <script type="application/javascript" src="jsnetworkx.js"></script>
+        <script type="application/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script> <script type="application/javascript" src="jsnetworkx.js"></script>
         <script type="application/javascript" src="simulator.js" defer></script>
     </head>
 
@@ -18,41 +18,46 @@
         </div>
         <div class="block block--bottom">
             <div class="pane">
-                <div class="segment">
+                <div class="segment segment--light">
                     <h3 class="segment__header">Controls</h3>
-                    <div class="parameter parameter--first">
+                    <div class="parameter parameter--first" id="nodes">
                         <label for="nodes" class="parameter__label">Number of Nodes:</label>
                         <input type="range" class="parameter__range" name="nodes" />
                         <output for="nodes" class="parameter__output"></output>
                     </div>
 
-                    <div class="mechanism">
+                    <div class="mechanism" id="erdos-renyi-mech">
                         <input type="radio" class="mechanism__radio" name="gen-mech" value="erdos-renyi" />
                         <label for="erdos-renyi" class="mechanism__label">Erd&ouml;s-R&eacute;nyi</label>
                     </div>
 
-                    <div class="parameter parameter--mechanism">
+                    <div class="parameter parameter--mechanism" id="erdos-renyi-param">
                         <label for="p" class="parameter__label">p:</label>
                         <input type="range" class="parameter__range" name="p" />
                         <output for="p" class="parameter__output"></output>
                     </div>
 
-                    <div class="mechanism">
+                    <div class="mechanism" id="barabasi-albert-mech">
                         <input type="radio" class="mechanism__radio" name="gen-mech" value="barabasi-albert" />
-                        <label for="barabasi-albert" class="mechanism__label">Barabasi-Albert</label>
+                        <label for="barabasi-albert" class="mechanism__label">Barab&aacute;si-Albert</label>
                     </div>
 
-                    <div class="parameter parameter--mechanism">
-                        <label for="k" class="parameter__label">k:</label>
-                        <input type="range" class="parameter__range" name="k" />
-                        <output for="k" class="parameter__output"></output>
+                    <div class="parameter parameter--mechanism" id="barabasi-albert-param">
+                        <label for="m" class="parameter__label">m:</label>
+                        <input type="range" class="parameter__range" name="m" />
+                        <output for="m" class="parameter__output"></output>
                     </div>
+
+                    <input type="button" class="button" id="run" name="run" value="Run" />
                 </div>
-                <div class="segment segment--bottom">
+                <div class="segment segment--bottom segment--light" id="properties">
                     <h3 class="segment__header">Properties</h3>
                 </div>
             </div>
-            <div class="pane pane--right" id="simulator"></div>
+            <div class="pane pane--right">
+                <div class="segment segment--top segment--dark" id="simulator"></div>
+                <div class="segment segment--plotly segment--bottom segment--light" id="histogram"></div>
+            </div>
         </div>
         <footer>
             <p>Copyright © 2019, <a href="https://emergence.asu.edu">Emergence@ASU</a></p>

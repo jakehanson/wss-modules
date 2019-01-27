@@ -1,3 +1,8 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
 body {
     margin: 0px 0px 100px 0px;
 }
@@ -34,24 +39,38 @@ footer {
 
 .block--bottom {
     display: flex;
+    border: 1px solid black;
 }
 
 .pane {
     width: 400px;
-    height: 574px;
-    border: 1px solid black;
+    /* height: 564px; */
 }
 
 .pane--right {
-    background: #eeeeee;
+    border-left: 1px solid black;
 }
 
 .segment {
     padding: 1em;
 }
 
+.segment--top {
+    padding: 0em;
+    height: 400px;
+}
+
 .segment--bottom {
     border-top: 1px solid black;
+}
+
+.segment--dark {
+    background: #eeeeee;
+}
+
+.segment--plotly {
+    padding: 0em;
+    height: 163px;
 }
 
 .segment__header {
@@ -83,4 +102,13 @@ footer {
 .parameter__output {
     margin-left: 1em;
     width: 4em;
+}
+
+.properties__label {
+    padding: 0em 1em 0em 0em;
+    font-style: italic;
+}
+
+.properties__value {
+    padding: 0em;
 }
