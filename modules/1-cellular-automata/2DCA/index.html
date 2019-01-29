@@ -11,7 +11,9 @@
     </div>
     <div id="control">
         <input type="button" id="initRand" value="Set random cells" onclick="caMap.setRandomCells()">
-        <input type="button" id="RunCA" value="Run" onclick="">
+        <input type="button" id="RunCAOnce" value="Step" onclick="caMap.step()">
+        <input type="button" id="RunCA" value="Run" onclick="caMap.run(100)">
+        <input type="button" id="StopCA" value="Stop" onclick="caMap.stop()">
     </div>
 </body>
 
