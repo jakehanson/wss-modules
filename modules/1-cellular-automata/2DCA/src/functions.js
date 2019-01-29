@@ -94,6 +94,7 @@ class CA2D{
     clearAll(){
         // Clear all things
         this.mat = new matrix(this.cell_dim);
+        this.next_mat = new matrix(this.cell_dim);
         this.cellSize = this.graphSize / this.cell_dim;
 
         this.obj.selectAll('rect').remove();
@@ -154,6 +155,7 @@ class CA2D{
     }
 
     setRandomCells(p = 0.5){
+        this.stop();
         var i, j;
         for (i = 0; i < this.cell_dim; i++){
             for (j = 0; j < this.cell_dim; j++){
@@ -255,12 +257,39 @@ class CA2D{
         return 0;
     }
 
+    clickstep(){
+        this.stop();
+        this.step();
+    }
+
     run(dt = 500){
         this.interval = d3.interval(() => this.step(), dt);
+        document.getElementById('RunCA').disabled = true;
     }
 
     stop(){
-        this.interval.stop();
+        try{
+            // Incase there is no interval variable
+            this.interval.stop();
+        } 
+        catch(err){
+
+        }
+        document.getElementById('RunCA').disabled = false;
         return;
+    }
+
+    setSize(){
+        this.stop();
+
+        this.setDim(parseInt(document.getElementById("CASize").value));
+
+        return;
+    }
+
+    clean(){
+        this.stop();
+
+        this.setDim(this.cell_dim);
     }
 }

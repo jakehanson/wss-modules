@@ -6,12 +6,16 @@
 </head>
 <body>
     <h1>2D Cellular Automata</h1>
+    <div id="set">
+        size: <input type="number" min="1" max="256" name="CASize" value="16" onchange="caMap.setSize()" id="CASize"/>
+    </div>
     <div id="display">
         <svg id="CA" width="500" height="500"></svg>
     </div>
     <div id="control">
+        <input type="button" id="clear" value="Clear All" onclick="caMap.clean()">
         <input type="button" id="initRand" value="Set random cells" onclick="caMap.setRandomCells()">
-        <input type="button" id="RunCAOnce" value="Step" onclick="caMap.step()">
+        <input type="button" id="RunCAOnce" value="Step" onclick="caMap.clickstep()">
         <input type="button" id="RunCA" value="Run" onclick="caMap.run(100)">
         <input type="button" id="StopCA" value="Stop" onclick="caMap.stop()">
     </div>
