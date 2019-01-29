@@ -15,7 +15,7 @@ body div {
 
 header {
     padding: 1em;
-    color: white;
+    color: black;
     background: #dbae57;
     clear: none;
     text-align: center;
@@ -37,7 +37,18 @@ footer {
 #instructions {
     width: 832px;
     margin-top: 20px;
-    text-align: center;
+    text-align: left;
+}
+
+#reminder {
+    font-weight: bold;
+}
+
+
+#questions {
+    width: 832px;
+    margin-top: 20px;
+    text-align: left;
 }
 
 #nest {
@@ -84,6 +95,7 @@ footer {
 #arena {
     width: 832px;
     text-align: center;
+    margin-top: 1em;
 }
 
 #prog-svg-prog {
