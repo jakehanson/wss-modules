@@ -1,34 +1,45 @@
 'use strict';
 
 /* TO DO */
-// Initialization Rules
-// Collisions between ants
+// How to color the ants
+// There is still an ant collision bug... catching up and switching direction together
 
 /* Styling */
 // Widen progress bars
-// Add ant graphic
 // Add winning nest procedure
+// Add ant graphic
 // Smooth progress transition?
-// Pad under settings 
 
-// 700 lines after update/discovery rules?
-// 800 lines after adding bells and whistles to svg
+/* Learning Goals */
+// Need to find right balance of parameters
 
 const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, timestep) {
 
     let x = 0, y = 0; // variable to store location
-    let vx = 0, vy = 0; // variable to store velocity 
+    let v_x = 0, v_y = 0; // variable to store velocity 
     let x_L = -(radius-r_enc)*Math.sin(aperture/2*Math.PI/180); // x-location of left boundary
 	let y_L = (radius-r_enc)*Math.cos(aperture/2*Math.PI/180);  // y-location of left boundary
 	let x_R = -x_L;
 	let y_R = y_L;
+
+    let max_tries = 1000;
+    let n_tries = 0;
+    let clearance_ticker = 0; // keeps track of # ants we have avoided
+    let clearance_flag = false; // keeps track of whether ALL ants were avoided
 
 	aperture = aperture/180*Math.PI; // we are going to use radians here
 
     // If it is the first nest, start it in the center of the aperture
     if (timestep == 0) {
     	x = 0;
-    	y = -radius;    
+    	y = -radius;  
+        clearance_flag = true;  
+
+        let alpha = Math.abs(Math.atan((y-y_R)/(x_R-x)));
+        let beta = Math.abs(Math.atan((y-y_L)/Math.abs(x_L-x)));
+        let launch_angle = alpha + Math.random(Math.PI-beta-alpha); // randomly puts us in [alpha, PI-beta]
+        v_x = velocity*Math.cos(launch_angle);
+        v_y = velocity*Math.sin(launch_angle);
 
 	// Subsequent ants enter at a random location	
     } else {
@@ -36,33 +47,68 @@ const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, 
     	let theta_L = 3*Math.PI/2-aperture/2+delta; // left starting angle
     	let theta_R = 3*Math.PI/2+aperture/2-delta; // right starting angle
     	let rand_angle = theta_L+Math.random()*(theta_R-theta_L); // put us somewhere between theta_L and theta_R
-    	x = radius*Math.cos(rand_angle);
-    	y = radius*Math.sin(rand_angle);
+
+
+        // Check for overlap
+        while (n_tries < 1000) {
+            n_tries++;
+            clearance_ticker = 0;
+
+            let x_0 = radius*Math.cos(rand_angle); // we place our particle
+            let y_0 = radius*Math.sin(rand_angle);
+
+            // Calculate an initial velocity for heading
+	        let alpha = Math.abs(Math.atan((y_0-y_R)/(x_R-x_0)));
+	        let beta = Math.abs(Math.atan((y_0-y_L)/Math.abs(x_L-x_0)));
+	        let launch_angle = alpha + Math.random(Math.PI-beta-alpha); // randomly puts us in [alpha, PI-beta]
+	        v_x = velocity*Math.cos(launch_angle);
+	        v_y = velocity*Math.sin(launch_angle);
+
+	        // Get time until ant has fully entered
+			let t_cross = (-(x_0*v_x+y_0*v_y)-Math.sqrt(Math.pow(x_0*v_x+y_0*v_y,2)-Math.pow(velocity,2)*(2*radius*r_enc-Math.pow(r_enc,2))))/Math.pow(velocity,2); // From R to R-r_enc
+
+			// Move ant into nest
+			x =  x_0 + v_x*t_cross;
+			y =  y_0 + v_y*t_cross;
+
+            // Check if we clear every ant
+            for (let i = 0; i < ant_array.length; ++i) {
+                // Get x,y of paritcle i
+                let x_prime = ant_array[i].x-cx;
+                let y_prime = ant_array[i].y-cy;
+                let d1 = Math.sqrt((x-x_prime)**2+(y-y_prime)**2); // check overlap upon entry
+                let d2 = Math.sqrt((x_0-x_prime)**2+(y_0-y_prime)**2); // check overlap upon placement
+
+
+                // If we don't, draw a new angle
+                if (d1 < 2*r_enc || d2 < 2*r_enc) {
+                    rand_angle = theta_L+Math.random()*(theta_R-theta_L); // put us somewhere between theta_L and theta_R
+                    break; // go try again
+                } else {
+                    clearance_ticker++; // keeps track of how many ants we cleared
+                }
+            }
+
+            if (clearance_ticker == ant_array.length){
+                clearance_flag = true;
+                break; // break out because we cleared all ants
+            }
+
+        }
     }
 
-    // Calculate Clearance angles for heading
-    let alpha = Math.abs(Math.atan((y-y_R)/(x_R-x)));
-    let beta = Math.abs(Math.atan((y-y_L)/Math.abs(x_L-x)));
-    let launch_angle = alpha + Math.random(Math.PI-beta-alpha); // randomly puts us in [alpha, PI-beta]
-    let v_x = velocity*Math.cos(launch_angle);
-    let v_y = velocity*Math.sin(launch_angle);
-
-
-    // Block the entrance for the moment
-    // if (timestep == 0) {
-	   //  v_x = 0; // block the entrance
-	   //  v_y = 0; // block the entrance
-    // }
-
-
-    // Append x,y position and velocity
-    ant_array.push({
-        "x": cx+x,
-        "y": cy+y,
-        "vx": v_x,
-        "vy": v_y,
-        "color": "black"
-    });
+    // If we were able to find a spot, append x,y position and velocity
+    if (clearance_flag) {
+        ant_array.push({
+            "x": cx+x,
+            "y": cy+y,
+            "vx": v_x,
+            "vy": v_y,
+            "color": "black"
+        });        
+    } else {
+        console.log("NEST BLOCKED!");
+    }
 
 };
 
@@ -70,6 +116,32 @@ const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, 
 // Function to calculate time until ant hits nest wall
 const get_t_wall = function(x, y, vx, vy, R, r_enc){
 	return (-(x*vx+y*vy)+Math.sqrt(Math.pow(x*vx+y*vy,2)-(vx*vx+vy*vy)*(x*x+y*y-(R-r_enc)*(R-r_enc))))/(vx*vx+vy*vy);
+};
+
+// Function to calculate time until two ants hit each
+const get_t_ant = function(x1, y1, x2, y2, vx1, vy1, vx2, vy2, r_enc){
+	let delta_x = x2-x1;
+	let delta_y = y2-y1;
+	let delta_vx = vx2-vx1;
+	let delta_vy = vy2-vy1;
+
+	let t1 = (-(delta_x*delta_vx+delta_y*delta_vy)-Math.sqrt((delta_x*delta_vx+delta_y*delta_vy)**2-(delta_vx**2+delta_vy**2)*
+		(delta_x**2+delta_y**2-4*r_enc**2)))/(delta_vx**2+delta_vy**2);
+
+	let t2 = (-(delta_x*delta_vx+delta_y*delta_vy)-Math.sqrt((delta_x*delta_vx+delta_y*delta_vy)**2-(delta_vx**2+delta_vy**2)*
+		(delta_x**2+delta_y**2-4*r_enc**2)))/(delta_vx**2+delta_vy**2);
+
+	// Return smallest positive root, within tol
+	if (t1 > 0 && t2 > 0){
+		return Math.min(t1,t2)
+	} else if (t1 > 0 && t2 < 0) {
+		return t1;
+	} else if (t2 > 0 && t1 < 0) {
+		return t2;
+	} else {
+		return NaN; // particles won't collide
+	}
+
 };
 
 
@@ -151,6 +223,46 @@ const wall_collision = function(cx, cy, ant_array, delta_t, i, velocity, r_enc, 
 
 };
 
+const ant_collision = function(ant_array, i, j, radius, r_enc){
+
+	let x1 = ant_array[i].x;
+	let y1 = ant_array[i].y;
+	let x2 = ant_array[j].x;
+	let y2 = ant_array[j].y;
+
+	let vx1 = ant_array[i].vx;
+	let vy1 = ant_array[i].vy;
+	let vx2 = ant_array[j].vx;
+	let vy2 = ant_array[j].vy;
+
+	let delta_x = x2-x1;
+	let delta_y = y2-y1;
+	let theta = Math.atan(delta_y/delta_x);
+
+	// First rotate into new coordinate system
+	let tx1 = vx1*Math.cos(theta)+vy1*Math.sin(theta);
+	let ty1 = -vx1*Math.sin(theta)+vy1*Math.cos(theta);
+	let tx2 = vx2*Math.cos(theta)+vy2*Math.sin(theta);
+	let ty2 = -vx2*Math.sin(theta)+vy2*Math.cos(theta);
+
+	// Flip x-velocity
+	tx1 = -tx1;
+	tx2 = -tx2;
+
+	// De-rotate
+	let ux1 = tx1*Math.cos(theta)-ty1*Math.sin(theta);
+	let uy1 = tx1*Math.sin(theta)+ty1*Math.cos(theta);
+	let ux2 = tx2*Math.cos(theta)-ty2*Math.sin(theta);
+	let uy2 = tx2*Math.sin(theta)+ty2*Math.cos(theta);
+
+	// Update
+	ant_array[i].vx = ux1;
+	ant_array[i].vy = uy1;
+	ant_array[j].vx = ux2;
+	ant_array[j].vy = uy2;
+
+};
+
 /**
  * The `App` factory function creates an object to encapsulate the core logic
  * for the application.  The object is created given the nest geometries,
@@ -185,6 +297,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
     	let t = 0; // keeps track of time between timesteps
     	let t_c = dt; // time until next event
     	let index = 0; // this is the index of the ant hitting the wall next
+    	let index1 = 0, index2 = 0; // these are the indices of the next two ants to collide
 
 	    // Check if we need to add new ants
 	    if (timestep % rate_A == 0 && ant_array.length < colony_size) {
@@ -215,12 +328,13 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 
 	    	let t_remaining = dt-t; // initialize time until next rendering
 	    	let t_min = t_remaining; // variable to keep track of min time
+	    	let t_ant = t_remaining; // variable to keep track of time until next ant-to-ant collision
+	    	let collision_flag = false; // flag to store whether ant-to-ant collision is next
 
-	    	// Loop over ants
+
+	    	// Get time until next wall collision
     		for (let i = 0; i < ant_array.length; ++i) {
-
                 let x = 0, y = 0, R = 0; // initialize variables
-
     			// Calculate time until wall collision
 		        if (ant_array[i].x < width/2) {
 		        	// Nest A update
@@ -232,37 +346,61 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 			    	y = ant_array[i].y-cy_B;
 			    	R = radius_B;
 		        }
-
                 t_c = get_t_wall(x, y, ant_array[i].vx, ant_array[i].vy, R, r_enc);
 
+                // console.log("Time until ", i, " collides with the wall",t_c);
 		        if (t_c < t_min && t_c > 1e-12){
 		        	//console.log("Time until wall collision ", t_c);
 		        	t_min = t_c;
 		        	index = i; // this is the index of the ant colliding with wall next
 		        }
+    		}
+
+    		// Get time until next ant-to-ant collision
+    		for (let i = 0; i < ant_array.length; ++i) {
+    			let x1 = ant_array[i].x;
+    			let y1 = ant_array[i].y;
+    			let vx1 = ant_array[i].vx;
+    			let vy1 = ant_array[i].vy;
+	    		for (let j = i + 1; j < ant_array.length; ++j) {
+	    			let x2 = ant_array[j].x;
+	    			let y2 = ant_array[j].y;
+	    			let vx2 = ant_array[j].vx;
+	    			let vy2 = ant_array[j].vy;
+
+	    			t_ant = get_t_ant(x1, y1, x2, y2, vx1, vy1, vx2, vy2, r_enc); // time until these two collide
+
+	    			// Check if they collide and if it is the next event
+	    			if (isNaN(t_ant) == false && t_ant < t_min){
+	    				//console.log(" Successful Calculation of t_ant");
+	    				t_min = t_ant;
+	    				collision_flag = true;
+	    				index1 = i;
+	    				index2 = j;
+	    			}
+	    		}
 
     		}
 
-    		// So all I need to do is update positions and add t_min to t
-    		// Need a method to update positions for a wall update, ant update, and simple update
-
+    		// Update positions and add t_min to t
 			simple_update(ant_array,t_min); // step everything forward in time by t_min
 			t += t_min; // update time 
 
 			// If t_min did not equal t_remaining then we had a collision of some sort
     		if (t_min != t_remaining){
-    			
-    			// switch the velocity vector of the ant in question
-				if (ant_array[index].x < width/2) {
-					// run wall update with nest A
-					//console.log("Running wall collision",t,t_min);
-                    console.log
-					wall_collision(cx_A, cy_A, ant_array, t_min, index, velocity, r_enc, aperture_A, width, height, ticker);
-				} else {
-					// run wall update with nest B
-					//console.log("Running wall collision",t,t_min);
-					wall_collision(cx_B, cy_B, ant_array, t_min, index, velocity, r_enc, aperture_B, width, height, ticker);
-				}
+    			if (collision_flag == true) {
+    				// run ant-ant collision
+    				ant_collision(ant_array,index1,index2, radius_A, r_enc);
+    			} else {
+    				// run ant/wall collision
+					if (ant_array[index].x < width/2) {
+						// run wall update with nest A
+						wall_collision(cx_A, cy_A, ant_array, t_min, index, velocity, r_enc, aperture_A, width, height, ticker);
+					} else {
+						// run wall update with nest B
+						wall_collision(cx_B, cy_B, ant_array, t_min, index, velocity, r_enc, aperture_B, width, height, ticker);
+					}
+    			}
 
     		}
 
@@ -319,20 +457,20 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         d3.select("#right-prog").attr("value", ticker.right);
 
         // See if we have reached the desired number of transporters
-        if (ticker.left == max_ants) {
-            console.log("Simulation over.");
-            console.log("Nest A Wins!");
+        if (ticker.left == max_ants || ticker.left == max_ants) {
+            //console.log("Simulation over.");
             stop();
             // Disable the step and start buttons and all initial param sliders
             d3.select('#step').attr('disabled', true);
             d3.select('#start').attr('disabled', true);
-        } else if (ticker.right == max_ants) {
-            console.log("Simulation over.");
-            console.log("Nest B Wins!");
-            stop();
-            // Disable the step and start buttons and all initial param sliders
-            d3.select('#step').attr('disabled', true);
-            d3.select('#start').attr('disabled', true);
+	        d3.select('#radius-A-slider').attr('disabled',true);
+	        d3.select('#aperture-A-slider').attr('disabled',true);
+	        d3.select('#discovery-A-slider').attr('disabled',true);
+	        d3.select('#radius-B-slider').attr('disabled',true);
+	        d3.select('#aperture-B-slider').attr('disabled',true);
+	        d3.select('#discovery-B-slider').attr('disabled',true);
+	        // d3.select('#colony-slider').attr('disabled',true);
+	        // d3.select('#velocity-slider').attr('disabled',true);
         }
 
     };
@@ -372,27 +510,21 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
     // Stop the simulation
     const stop = function() {
         // If the simulation is running (i.e. that the timer is not null)
+        // Enable the step and start buttons
+        d3.select('#step').attr('disabled', null);
+        d3.select('#start').attr('disabled', null);
+
         if (timer !== null) {
-            // Stop the timers
-            timer.stop();
-            // Set the timer to null
-            timer = null;
+        
+	        // Stop the timers
+	        timer.stop();
+	        // Set the timer to null
+	        timer = null;
 
-            // Enable the step and start buttons
-            d3.select('#step').attr('disabled', null);
-            d3.select('#start').attr('disabled', null);
-            d3.select('#radius-A-slider').attr('disabled',null);
-            d3.select('#aperture-A-slider').attr('disabled',null);
-            d3.select('#discovery-A-slider').attr('disabled',null);
-            d3.select('#radius-B-slider').attr('disabled',null);
-            d3.select('#aperture-B-slider').attr('disabled',null);
-            d3.select('#discovery-B-slider').attr('disabled',null);
-            // d3.select('#colony-slider').attr('disabled',null);
-            // d3.select('#velocity-slider').attr('disabled',null);
+	        // Disable the stop button
+	        d3.select('#stop').attr('disabled', true);
+	    }
 
-            // Disable the stop button
-            d3.select('#stop').attr('disabled', true);
-        }
     };
 
     // Restart the simulation
@@ -404,6 +536,17 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         timestep = 0;
         ticker.left = 0; // reset left progress
         ticker.right = 0; // reset right progress
+
+        // Enable the step and start buttons
+        d3.select('#radius-A-slider').attr('disabled',null);
+        d3.select('#aperture-A-slider').attr('disabled',null);
+        d3.select('#discovery-A-slider').attr('disabled',null);
+        d3.select('#radius-B-slider').attr('disabled',null);
+        d3.select('#aperture-B-slider').attr('disabled',null);
+        d3.select('#discovery-B-slider').attr('disabled',null);
+        // d3.select('#colony-slider').attr('disabled',null);
+        // d3.select('#velocity-slider').attr('disabled',null);
+
 
         // Render the new state
         render();
@@ -503,7 +646,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
             rate_A = n;
 
             // Update the slider's label
-            d3.select('#discovery-A').html(`${rate_A} s/ant`);
+            d3.select('#discovery-A').html(`${rate_A} step/ant`);
 
             // restart
             this.restart();
@@ -522,7 +665,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
             rate_B = n;
 
             // Update the slider's label
-            d3.select('#discovery-B').html(`${rate_B} s/ant`);
+            d3.select('#discovery-B').html(`${rate_B} step/ant`);
 
             // restart
             this.restart();
@@ -574,9 +717,9 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
     const app = App({
         radius_A: 40, // nest A radius
         radius_B: 180, // nest B radius
-        aperture_A: 35, // nest A opening angle
+        aperture_A: 60, // nest A opening angle
         aperture_B: 35, // nest B opening angle
-        rate_A: 90, // seconds between discovery
+        rate_A: 10, // seconds between discovery
         rate_B: 90, // seconds between discovery
         colony_size: 50, // total number of ants
         max_ants: 15, // number of transporters required to end the simulation
@@ -626,14 +769,14 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         app.rate_A = parseInt(this.value);
     }).attr('value', `${app.rate_A}`);
     // Set the slider's initial label
-    d3.select('#discovery-A').html(`${app.rate_A} s/ant`);
+    d3.select('#discovery-A').html(`${app.rate_A} step/ant`);
 
     // Register an oninput handler to the discovery rate B slider, and set the initial value
     d3.select('#discovery-B-slider').on('input', function() {
         app.rate_B = parseInt(this.value);
     }).attr('value', `${app.rate_B}`);
     // Set the slider's initial label
-    d3.select('#discovery-B').html(`${app.rate_B} s/ant`);
+    d3.select('#discovery-B').html(`${app.rate_B} step/ant`);
 
     // Register an oninput handler to the colony slider, and set the initial value
     // d3.select('#colony-slider').on('input', function() {
