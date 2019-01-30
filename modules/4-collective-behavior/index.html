@@ -19,24 +19,24 @@
         <p>
             In this simulator, you will be playing with a stripped down version of nest site selection in Temnothorax ant colonies.
 
-            As you learned in lecture, the first nest site to reach a critical density (known as quorum) wins the competition. But how does an individual ant know if quorum has been met? Does it count up all the ants in the nest and divide by the nest area?
+            As you learned in lecture, the first nest site to reach a critical density (known as quorum) wins the competition. But how does an individual ant know if quorum has been met?
 
         <p>
             <b>It is your job here to reverse engineer the rule that individual ants use in this simulation to sense quorum.</b>
         </p>	
-            As you will see, there is a progress bar to the left and right of the arena that keeps track of how close a colony is to choosing a given nest. When the progress bar fills up, a consensus decision has been reached. 
+            As you will see, there are progress bars to the left and right of the arena that keep track of how close a colony is to choosing a given nest. When the progress bar fills up, a consensus decision has been reached. 
 
-            To aid in your understanding, a list of helpful questions is below.
+            To aid in your understanding, a list of helpful questions is provided below.
 
         </p>
     <div id="questions">
         <h2> Questions </h2>   
         <OL>
-        <li> What does the ant color represent? </li>
-        <li> When does the progress bar for a given nest increase? </li>
-        <li> Use your answers from questions 1-2 to reverse engineer the "rule" that is being used to choose between nests. What is it?</li>  
-        <li>  How does the nest geometry affect the outcome of the collective decision given this rule? Specifically, will the colony choose a smaller or larger nest? What about a smaller or larger aperture size? </li>
-        <li> How might evolution "program" individual-level behavior in order to select nests with a specific geometry?  </li>
+        <li> What does the ant color represent? Does it ever change back to black? </li>
+        <li> When does the progress bar for a given nest increase? Does it depend on the color?</li>
+        <li> Use your answers from questions 1-2 to determine the "rule" that is being used to choose between nests. What is it?</li>  
+        <li>  How does nest geometry affect the outcome of the collective decision given this rule? Namely, does the colony prefer larger or smaller nests? What about larger or smaller aperture sizes? </li>
+        <li> How might evolution "program" quorum-sensing behavior in order to select nests with a desirable geometry?  </li>
         </OL>
         </p>
     </div>
@@ -46,17 +46,17 @@
             <h3>Nest A Settings</h3>
             <div class="nest-controls" id="radius-A-settings">
                 <label for="radius-A-slider">Radius:</label>
-                <input type="range" min="40" max="180" id="radius-A-slider" name="radius-A-slider" />
+                <input type="range" min="40" max="120" id="radius-A-slider" name="radius-A-slider" />
                 <output id="radius-A" name="radius-A" for="radius-A-slider"></output>
             </div>
             <div class="nest-controls" id="aperture-A-settings">
                 <label for="aperture-A-slider">Aperture:</label>
-                <input type="range" min="25" max="60" id="aperture-A-slider" name="aperture-A-slider" />
+                <input type="range" min="25" max="75" step="5" id="aperture-A-slider" name="aperture-A-slider" />
                 <output id="aperture-A" name="aperture-A" for="aperture-A"></output>
             </div>                
             <div class="nest-controls" id="discovery-A-settings">
                 <label for="discovery-A-slider">Discovery Rate:</label>
-                <input type="range" min="10" max="90" step="5" id="discovery-A-slider" name="discovery-A-slider" />
+                <input type="range" min="50" max="95" step="5" id="discovery-A-slider" name="discovery-A-slider" />
                 <output id="discovery-A" name="discovery-A" for="discovery-A-slider"></output>
             </div>
         </div>     
@@ -64,17 +64,17 @@
             <h3>Nest B Settings</h3>
             <div class="nest-controls" id="radius-B-settings">
                 <label for="radius-B-slider">Radius:</label>
-                <input type="range" min="40" max="180" id="radius-B-slider" name="radius-B-slider" />
+                <input type="range" min="40" max="120" id="radius-B-slider" name="radius-B-slider" />
                 <output id="radius-B" name="radius-B" for="radius-B-slider"></output>
             </div>
             <div class="nest-controls" id="aperture-B-settings">
                 <label for="aperture-B-slider">Aperture:</label>
-                <input type="range" min="25" max="60" id="aperture-B-slider" name="aperture-B-slider" />
+                <input type="range" min="25" max="75" step="5" id="aperture-B-slider" name="aperture-B-slider" />
                 <output id="aperture-B" name="aperture-B" for="aperture-B"></output>
             </div>                
             <div class="nest-controls" id="discovery-B-settings">
                 <label for="discovery-B-slider">Discovery Rate:</label>
-                <input type="range" min="10" max="90" step="5" id="discovery-B-slider" name="discovery-B-slider" />
+                <input type="range" min="50" max="95" step="5" id="discovery-B-slider" name="discovery-B-slider" />
                 <output id="discovery-B" name="discovery-B" for="discovery-B-slider"></output>
             </div>
         </div>

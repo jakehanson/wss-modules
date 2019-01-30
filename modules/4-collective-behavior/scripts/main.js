@@ -1,17 +1,12 @@
 'use strict';
 
 /* TO DO */
-// How to color the ants
-// There is still an ant collision bug... catching up and switching direction together
+// There is still an ant collision bug... headings not always correct
 
 /* Styling */
-// Widen progress bars
 // Add winning nest procedure
 // Add ant graphic
 // Smooth progress transition?
-
-/* Learning Goals */
-// Need to find right balance of parameters
 
 const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, timestep) {
 
@@ -105,7 +100,7 @@ const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, 
             "vx": v_x,
             "vy": v_y,
             "t_collide":NaN, // time since last encounter
-            "color": "gray"
+            "color": "black"
         });        
     } 
     // else {
@@ -154,9 +149,9 @@ const simple_update = function(ant_array, delta_t, t, t_excite){
 
 		// Check if the ant is in the stimulated state
 		if (t - ant_array[i].t_collide < t_excite){
-			ant_array[i].color = "green";
+			ant_array[i].color = "red";
 		} else {
-			ant_array[i].color = "gray";
+			ant_array[i].color = "black";
 		}
 	}
 };
@@ -206,9 +201,9 @@ const wall_collision = function(cx, cy, ant_array, delta_t, i, velocity, r_enc, 
 	angle_1 = (angle_1*180/Math.PI);  // convert to degrees
 	angle_1 = (angle_1%360+360)%360;  // put it in [0,360]
 	if (angle_1 > 270-aperture/2. && angle_1 < 270 + aperture/2){
-        if (ant_array[i].x < width/2 && ant_array[i].color == "green") {
+        if (ant_array[i].x < width/2 && ant_array[i].color == "red") {
             ticker.left++; // update progress bar
-        } else if (ant_array[i].x > width/2 && ant_array[i].color == "green"){
+        } else if (ant_array[i].x > width/2 && ant_array[i].color == "red"){
             ticker.right++; // update progress bar
         }
         ant_array.splice(i,1); // remove the ant that exited
@@ -471,10 +466,12 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         d3.select("#left-prog").attr("value", ticker.left);
         d3.select("#right-prog").attr("value", ticker.right);
 
+
         // See if we have reached the desired number of transporters
         if (ticker.left == max_ants || ticker.right == max_ants) {
             //console.log("Simulation over.");
             stop();
+
             // Disable the step and start buttons and all initial param sliders
             d3.select('#step').attr('disabled', true);
             d3.select('#start').attr('disabled', true);
@@ -486,6 +483,50 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 	        d3.select('#discovery-B-slider').attr('disabled',true);
 	        // d3.select('#colony-slider').attr('disabled',true);
 	        // d3.select('#velocity-slider').attr('disabled',true);
+
+
+	        if(ticker.left == max_ants){
+	        	// Write Nest A Wins!
+	        	d3.select('svg').append('text')
+			    .attr('x', cx_A-35)
+			    .attr('y', height-25)
+			    .attr('fill', 'green')
+			    .attr('font-weight', 'bold')
+			    .attr('font-size', '100px')
+			    .html("&#x2713;");
+
+	        	// Write Nest B Loses!
+	        	d3.select('svg').append('text')
+			    .attr('x', cx_B-35)
+			    .attr('y', height-25)
+			    .attr('fill', 'red')
+			    .attr('font-weight', 'bold')
+			    .attr('font-size', '100px')
+			    .html("&#x2718;");
+
+	        } else {
+	        	// Nest B Wins!
+	        	d3.select('svg').append('text')
+			    .attr('x', cx_B-35)
+			    .attr('y', height-25)
+			    .attr('fill', 'green')
+			    .attr('font-weight', 'bold')
+			    .attr('font-size', '100px')
+			    .html("&#x2713;");
+
+	        	// Nest A Loses!
+	        	d3.select('svg').append('text')
+			    .attr('x', cx_A-35)
+			    .attr('y', height-25)
+			    .attr('fill', 'red')
+			    .attr('font-weight', 'bold')
+			    .attr('font-size', '100px')
+			    .html("&#x2718;");
+
+	        }
+
+
+
         }
 
     };
@@ -502,6 +543,25 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         	stop(); // stop the sim
             d3.select('#step').attr('disabled', true); // disable step and start
             d3.select('#start').attr('disabled', true);
+
+            // Nobody wins!
+        	d3.select('svg').append('text')
+		    .attr('x', cx_A-35)
+		    .attr('y', height-25)
+		    .attr('fill', 'red')
+		    .attr('font-weight', 'bold')
+		    .attr('font-size', '100px')
+		    .html("&#x2718;");
+
+		    d3.select('svg').append('text')
+		    .attr('x', cx_B-35)
+		    .attr('y', height-25)
+		    .attr('fill', 'red')
+		    .attr('font-weight', 'bold')
+		    .attr('font-size', '100px')
+		    .html("&#x2718;");
+
+
         }
 
     };
@@ -569,6 +629,9 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         d3.select('#discovery-B-slider').attr('disabled',null);
         // d3.select('#colony-slider').attr('disabled',null);
         // d3.select('#velocity-slider').attr('disabled',null);
+
+        // Remove the check marks
+        svg.selectAll("text").remove();
 
 
         // Render the new state
@@ -738,15 +801,15 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 (function() {
     // Create the initial application state
     const app = App({
-        radius_A: 40, // nest A radius
-        radius_B: 80, // nest B radius
-        aperture_A: 60, // nest A opening angle
-        aperture_B: 30, // nest B opening angle
-        rate_A: 90, // seconds between discovery
-        rate_B: 10, // seconds between discovery
+        radius_A: 90, // nest A radius
+        radius_B: 40, // nest B radius
+        aperture_A: 35, // nest A opening angle
+        aperture_B: 60, // nest B opening angle
+        rate_A: 95, // seconds between discovery
+        rate_B: 95, // seconds between discovery
         colony_size: 50, // total number of ants
         max_ants: 15, // number of transporters required to end the simulation
-        t_excite: 3, // number of seconds (in simulation time) ant remains in excited state
+        t_excite: 4, // number of seconds (in simulation time) ant remains in excited state
         velocity: 25 // pixels/sec
     });
 
