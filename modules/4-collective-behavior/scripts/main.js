@@ -104,7 +104,8 @@ const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, 
             "y": cy+y,
             "vx": v_x,
             "vy": v_y,
-            "color": "black"
+            "t_collide":NaN, // time since last encounter
+            "color": "gray"
         });        
     } else {
         console.log("NEST BLOCKED!");
@@ -146,10 +147,15 @@ const get_t_ant = function(x1, y1, x2, y2, vx1, vy1, vx2, vy2, r_enc){
 
 
 // Function for moving the ants forward in time by dt
-const simple_update = function(ant_array, delta_t){
+const simple_update = function(ant_array, delta_t, t, t_excite){
 	for (let i = 0; i < ant_array.length; ++i) {
 		ant_array[i].x += ant_array[i].vx*delta_t;
 		ant_array[i].y += ant_array[i].vy*delta_t;
+
+		// Check if the ant is in the stimulated state
+		if (t - ant_array[i].t_collide < t_excite){
+			ant_array[i].color = "green";
+		}
 	}
 };
 
@@ -198,22 +204,14 @@ const wall_collision = function(cx, cy, ant_array, delta_t, i, velocity, r_enc, 
 	angle_1 = (angle_1*180/Math.PI);  // convert to degrees
 	angle_1 = (angle_1%360+360)%360;  // put it in [0,360]
 	if (angle_1 > 270-aperture/2. && angle_1 < 270 + aperture/2){
-		ant_array[i].vx = 0;
-		ant_array[i].vy = 0;
-		// Send ants to their respective sidelines
         if (ant_array[i].x < width/2) {
-			ant_array[i].x = r_enc;
-			ant_array[i].y = height - r_enc*(1+i);
-            // Update progress bar
-            ticker.left++;
+            ticker.left++; // update progress bar
         } else {
-			ant_array[i].x = width - r_enc;
-			ant_array[i].y = height - r_enc*(1+i);
-            // Update progress bar
-            ticker.right++;
-
+            ticker.right++; // update progress bar
         }
         ant_array.splice(i,1); // remove the ant that exited
+
+        // If there are no more ants end the simulation... 
 
     // If not, update heading
 	} else {
@@ -223,7 +221,7 @@ const wall_collision = function(cx, cy, ant_array, delta_t, i, velocity, r_enc, 
 
 };
 
-const ant_collision = function(ant_array, i, j, radius, r_enc){
+const ant_collision = function(ant_array, i, j, radius, r_enc, time){
 
 	let x1 = ant_array[i].x;
 	let y1 = ant_array[i].y;
@@ -255,11 +253,15 @@ const ant_collision = function(ant_array, i, j, radius, r_enc){
 	let ux2 = tx2*Math.cos(theta)-ty2*Math.sin(theta);
 	let uy2 = tx2*Math.sin(theta)+ty2*Math.cos(theta);
 
-	// Update
+	// Update velocity
 	ant_array[i].vx = ux1;
 	ant_array[i].vy = uy1;
 	ant_array[j].vx = ux2;
 	ant_array[j].vy = uy2;
+
+	// Update time of last collision
+	ant_array[i].t_collide = time;
+	ant_array[j].t_collide = time;
 
 };
 
@@ -268,7 +270,7 @@ const ant_collision = function(ant_array, i, j, radius, r_enc){
  * for the application.  The object is created given the nest geometries,
  * colony size, and some Brownian motion parameters
  **/
-const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B, colony_size, velocity, max_ants}) {
+const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B, colony_size, velocity, max_ants, t_excite}) {
 
     
     // Set some global params
@@ -276,6 +278,10 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
     let timestep = 0; // keeps track of the number of timesteps
     let timer = null; // keeps track of whether or not the sim is running
     let dt = 1/velocity; // this is the timestep in s (we only move 1 px max)
+	let t = 0; // simulation time
+	let t_0 = 0; // start of timestep
+
+    let n_entered = 0; // keeps track of how many ants have entered
 
     // Get the SVG element with id 'trajectory'
     let svg = d3.select('#trajectory');
@@ -294,39 +300,45 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 
     const fire = function() {
 
-    	let t = 0; // keeps track of time between timesteps
     	let t_c = dt; // time until next event
     	let index = 0; // this is the index of the ant hitting the wall next
     	let index1 = 0, index2 = 0; // these are the indices of the next two ants to collide
 
-	    // Check if we need to add new ants
-	    if (timestep % rate_A == 0 && ant_array.length < colony_size) {
+    	t_0 = t; // t_0 will be original time, t will change 
+
+	    // Check if we need to add new ants... we keep adding new ants as long as the ant_array is less than the colony size...
+	    // if (timestep % rate_A == 0 && ant_array.length < colony_size) {
+	    if (timestep % rate_A == 0 && n_entered < colony_size) {
 	    	// Make sure this isn't the last ant
-	    	if (ant_array.length != colony_size - 1){
+	    	if (n_entered != colony_size - 1){
 		    	init_ant(cx_A, cy_A, radius_A, r_enc, aperture_A, ant_array, velocity, timestep);
+		    	n_entered++; // increment number of ants that have entered
 	    	} else {
 	    		// if it is the last ant make sure nest B isn't also expecting an ant at this time
 	    		if (timestep % rate_B != 0) {
 		    		init_ant(cx_A, cy_A, radius_A, r_enc, aperture_A, ant_array, velocity, timestep);
+			    	n_entered++; // increment number of ants that have entered
 	    		} else {
-	    			// randomly choose which nest the last ant goes to
+	    			// if both nests are expecrting the last ant, randomly choose between them
 	    			let rand_nest = Math.floor(Math.random()*2);
 	    			if (rand_nest == 0) {
 			    		init_ant(cx_A, cy_A, radius_A, r_enc, aperture_A, ant_array, velocity, timestep); // add to nest A
 	    			} else {
 					    init_ant(cx_B, cy_B, radius_B, r_enc, aperture_B, ant_array,velocity, timestep); // add to nest B
 	    			}
+			    	n_entered++; // increment number of ants that have entered
 	    		}
 	    	}
 		}
-	    if (timestep % rate_B == 0 && ant_array.length < colony_size) {
+	    if (timestep % rate_B == 0 && n_entered < colony_size) {
 		    init_ant(cx_B, cy_B, radius_B, r_enc, aperture_B, ant_array,velocity, timestep); // add ant to nest B
+	    	n_entered++; // increment number of ants that have entered
 	    }
 
 	    // Get time until next collision
-	    while (t < dt) {
+	    while (t < t_0 + dt) {
 
-	    	let t_remaining = dt-t; // initialize time until next rendering
+	    	let t_remaining = t_0+dt-t; // initialize time until next rendering
 	    	let t_min = t_remaining; // variable to keep track of min time
 	    	let t_ant = t_remaining; // variable to keep track of time until next ant-to-ant collision
 	    	let collision_flag = false; // flag to store whether ant-to-ant collision is next
@@ -383,14 +395,14 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
     		}
 
     		// Update positions and add t_min to t
-			simple_update(ant_array,t_min); // step everything forward in time by t_min
+			simple_update(ant_array,t_min, t, t_excite); // step everything forward in time by t_min
 			t += t_min; // update time 
 
 			// If t_min did not equal t_remaining then we had a collision of some sort
     		if (t_min != t_remaining){
     			if (collision_flag == true) {
     				// run ant-ant collision
-    				ant_collision(ant_array,index1,index2, radius_A, r_enc);
+    				ant_collision(ant_array,index1,index2, radius_A, r_enc, t);
     			} else {
     				// run ant/wall collision
 					if (ant_array[index].x < width/2) {
@@ -437,7 +449,10 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
 	    if (timestep == 0) {
 		    ant_array = []; // empty array to hold all ants
 		    init_ant(cx_A, cy_A, radius_A, r_enc, aperture_A, ant_array, velocity, timestep);
+	    	n_entered++; // increment number of ants that have entered
 		    init_ant(cx_B, cy_B, radius_B, r_enc, aperture_B, ant_array,velocity, timestep);
+	    	n_entered++; // increment number of ants that have entered
+
 	    }
 
         // Draw Ants
@@ -503,8 +518,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         d3.select('#stop').attr('disabled', null);
 
         // Start a timer that will call the `step` function every dt milliseconds
-        timer = d3.interval(step, dt*1000);
-        //console.log(timer);
+        timer = d3.interval(step, dt*100);
     };
 
     // Stop the simulation
@@ -532,10 +546,12 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         // Stop the simulation (if it is running)
         stop();
 
-        // Reset the timestep counter
+        // Reset the counters
+        t = 0;
         timestep = 0;
-        ticker.left = 0; // reset left progress
-        ticker.right = 0; // reset right progress
+        n_entered = 0;
+        ticker.left = 0;
+        ticker.right = 0;
 
         // Enable the step and start buttons
         d3.select('#radius-A-slider').attr('disabled',null);
@@ -723,6 +739,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         rate_B: 90, // seconds between discovery
         colony_size: 50, // total number of ants
         max_ants: 15, // number of transporters required to end the simulation
+        t_excite: 3, // number of seconds (in simulation time) ant remains in excited state
         velocity: 25 // pixels/sec
     });
 
