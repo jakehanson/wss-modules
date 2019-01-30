@@ -107,10 +107,10 @@ const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, 
             "t_collide":NaN, // time since last encounter
             "color": "gray"
         });        
-    } else {
-        console.log("NEST BLOCKED!");
-    }
-
+    } 
+    // else {
+    //     console.log("NEST BLOCKED!");
+    // }
 };
 
 
@@ -155,6 +155,8 @@ const simple_update = function(ant_array, delta_t, t, t_excite){
 		// Check if the ant is in the stimulated state
 		if (t - ant_array[i].t_collide < t_excite){
 			ant_array[i].color = "green";
+		} else {
+			ant_array[i].color = "gray";
 		}
 	}
 };
@@ -204,14 +206,12 @@ const wall_collision = function(cx, cy, ant_array, delta_t, i, velocity, r_enc, 
 	angle_1 = (angle_1*180/Math.PI);  // convert to degrees
 	angle_1 = (angle_1%360+360)%360;  // put it in [0,360]
 	if (angle_1 > 270-aperture/2. && angle_1 < 270 + aperture/2){
-        if (ant_array[i].x < width/2) {
+        if (ant_array[i].x < width/2 && ant_array[i].color == "green") {
             ticker.left++; // update progress bar
-        } else {
+        } else if (ant_array[i].x > width/2 && ant_array[i].color == "green"){
             ticker.right++; // update progress bar
         }
         ant_array.splice(i,1); // remove the ant that exited
-
-        // If there are no more ants end the simulation... 
 
     // If not, update heading
 	} else {
@@ -472,7 +472,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         d3.select("#right-prog").attr("value", ticker.right);
 
         // See if we have reached the desired number of transporters
-        if (ticker.left == max_ants || ticker.left == max_ants) {
+        if (ticker.left == max_ants || ticker.right == max_ants) {
             //console.log("Simulation over.");
             stop();
             // Disable the step and start buttons and all initial param sliders
@@ -497,6 +497,13 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         fire(ant_array);
         render(); // render the initial state
 
+        // Check if we should end sim
+        if (ant_array.length == 0 && n_entered == colony_size) {
+        	stop(); // stop the sim
+            d3.select('#step').attr('disabled', true); // disable step and start
+            d3.select('#start').attr('disabled', true);
+        }
+
     };
 
     // Start the simulation
@@ -518,7 +525,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         d3.select('#stop').attr('disabled', null);
 
         // Start a timer that will call the `step` function every dt milliseconds
-        timer = d3.interval(step, dt*100);
+        timer = d3.interval(step, dt*500);
     };
 
     // Stop the simulation
@@ -732,11 +739,11 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
     // Create the initial application state
     const app = App({
         radius_A: 40, // nest A radius
-        radius_B: 180, // nest B radius
+        radius_B: 80, // nest B radius
         aperture_A: 60, // nest A opening angle
-        aperture_B: 35, // nest B opening angle
-        rate_A: 10, // seconds between discovery
-        rate_B: 90, // seconds between discovery
+        aperture_B: 30, // nest B opening angle
+        rate_A: 90, // seconds between discovery
+        rate_B: 10, // seconds between discovery
         colony_size: 50, // total number of ants
         max_ants: 15, // number of transporters required to end the simulation
         t_excite: 3, // number of seconds (in simulation time) ant remains in excited state
