@@ -19,12 +19,12 @@
         <p>
             In this simulator, you will be playing with a stripped down version of nest site selection in Temnothorax ant colonies.
 
-            As you learned in lecture, the first nest site to reach a critical density (known as quorum) wins the competition. But how does an individual ant know if quorum has been met?
+            As you learned in lecture, the first nest site to reach a critical density (known as a quorum) wins the competition. But how does an individual ant know if a quorum has been met?
 
         <p>
             <b>It is your job here to reverse engineer the rule that individual ants use in this simulation to sense quorum.</b>
         </p>	
-            As you will see, there are progress bars to the left and right of the arena that keep track of how close a colony is to choosing a given nest. When the progress bar fills up, a consensus decision has been reached. 
+            There are progress bars to the left and right of the arena that will increment every time an ant leaves the nest having sensed quorum. When the progress bar fills up, enough individual ants have sensed quorum that a consensus decision has been reached.
 
             To aid in your understanding, a list of helpful questions is provided below.
 
@@ -32,11 +32,11 @@
     <div id="questions">
         <h2> Questions </h2>   
         <OL>
-        <li> What does the ant color represent? Does it ever change back to black? </li>
+        <li> When does an ant turn red? What causes it to change back to black? </li>
         <li> When does the progress bar for a given nest increase? Does it depend on the color?</li>
-        <li> Use your answers from questions 1-2 to determine the "rule" that is being used to choose between nests. What is it?</li>  
-        <li>  How does nest geometry affect the outcome of the collective decision given this rule? Namely, does the colony prefer larger or smaller nests? What about larger or smaller aperture sizes? </li>
-        <li> How might evolution "program" quorum-sensing behavior in order to select nests with a desirable geometry?  </li>
+        <li> Use your answers from questions 1-2 to determine the "rule" that is being used by individual ants to sense quorum. What is it? </li>  
+        <li> Given this rule, will the colony choose larger or smaller nests? What about larger or smaller aperture sizes? Why? </li>
+        <li> How might evolution "program" quorum-sensing behavior in order to select nests with a desirable geometry (i.e. radius, aperture)?  </li>
         </OL>
         </p>
     </div>
