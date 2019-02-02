@@ -2,11 +2,10 @@
 
 /* TO DO */
 // There is still an ant collision bug... headings not always correct
+// Set limits of angle slider based on radius
 
 /* Styling */
-// Add winning nest procedure
 // Add ant graphic
-// Smooth progress transition?
 
 const init_ant = function(cx, cy, radius, r_enc, aperture, ant_array, velocity, timestep) {
 
@@ -732,7 +731,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
             rate_A = n;
 
             // Update the slider's label
-            d3.select('#discovery-A').html(`${rate_A} step/ant`);
+            d3.select('#discovery-A').html(`${rate_A} steps/ant`);
 
             // restart
             this.restart();
@@ -751,7 +750,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
             rate_B = n;
 
             // Update the slider's label
-            d3.select('#discovery-B').html(`${rate_B} step/ant`);
+            d3.select('#discovery-B').html(`${rate_B} steps/ant`);
 
             // restart
             this.restart();
@@ -807,7 +806,7 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         aperture_B: 60, // nest B opening angle
         rate_A: 95, // seconds between discovery
         rate_B: 95, // seconds between discovery
-        colony_size: 50, // total number of ants
+        colony_size: 75, // total number of ants
         max_ants: 15, // number of transporters required to end the simulation
         t_excite: 4, // number of seconds (in simulation time) ant remains in excited state
         velocity: 25 // pixels/sec
@@ -856,14 +855,14 @@ const App = function({radius_A, radius_B, aperture_A, aperture_B, rate_A, rate_B
         app.rate_A = parseInt(this.value);
     }).attr('value', `${app.rate_A}`);
     // Set the slider's initial label
-    d3.select('#discovery-A').html(`${app.rate_A} step/ant`);
+    d3.select('#discovery-A').html(`${app.rate_A} steps/ant`);
 
     // Register an oninput handler to the discovery rate B slider, and set the initial value
     d3.select('#discovery-B-slider').on('input', function() {
         app.rate_B = parseInt(this.value);
     }).attr('value', `${app.rate_B}`);
     // Set the slider's initial label
-    d3.select('#discovery-B').html(`${app.rate_B} step/ant`);
+    d3.select('#discovery-B').html(`${app.rate_B} steps/ant`);
 
     // Register an oninput handler to the colony slider, and set the initial value
     // d3.select('#colony-slider').on('input', function() {
