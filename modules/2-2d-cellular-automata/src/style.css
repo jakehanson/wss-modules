@@ -1,0 +1,28 @@
+h1 {
+    color: black;
+    font-family : "Lucida Grande", Verdana, Lucida, Arial, Helvetica, 宋体,sans-serif;
+    text-align: center;
+}
+
+p {
+    color: black;
+    font-family : "Lucida Grande", Verdana, Lucida, Arial, Helvetica, 宋体,sans-serif;
+    font-size: 0.5cm;
+}
+
+.input {
+    color: black;
+    font-family : "Lucida Grande", Verdana, Lucida, Arial, Helvetica, 宋体,sans-serif;
+    font-size: 0.4cm;
+}
+
+input[type="button"] {
+    color: black;
+    font-family : "Lucida Grande", Verdana, Lucida, Arial, Helvetica, 宋体,sans-serif;
+    font-size: 0.6cm;
+}
+
+.center {
+    text-align: center;
+    width: 100%;
+}
