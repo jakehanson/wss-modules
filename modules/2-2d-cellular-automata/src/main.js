@@ -3,7 +3,7 @@
 // Global Variables
 
 // # INIT
-caMap = new CA2D(16, 500, 'CA');
+caMap = new CA2D(32, 500, 'CA');
 
 // # FUNCTIONS
 

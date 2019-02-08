@@ -1,23 +1,51 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>2D Cellular Automata</title>
+    <link href="src/style.css" type="text/css" rel="stylesheet">
+    <title>Game of Life</title>
     <script type="application/javascript" src="https://d3js.org/d3.v5.min.js"></script>
 </head>
 <body>
-    <h1>2D Cellular Automata</h1>
-    <div id="set">
-        size: <input type="number" min="1" max="256" name="CASize" value="16" onchange="caMap.setSize()" id="CASize"/>
+    <h1 class="center">Game of Life</h1>
+    <div id="set" class="center">
+        
     </div>
-    <div id="display">
-        <svg id="CA" width="500" height="500"></svg>
+    <div id="whatIsGameofLife">
+        <h2>Can we simulate life?</h2>
+        <p>Can we simulate life? Or something that looks like life?</p>
+        <p>Let's play a game, a game of life. Consider a 2D world, where lifes (or agents, cells, etc.) live on a lattice.
+            Each cell can be alive or dead, represented by black or white. All cells follow the same rule: They can only 
+            live in certain density enviroments. If it is too crowded or sparse, they will die. If the density is proper, 
+            a live (black) cell can emerge on a dead (white) cell.</p>
+        <p> </p>
     </div>
-    <div id="control">
-        <input type="button" id="clear" value="Clear All" onclick="caMap.clean()">
-        <input type="button" id="initRand" value="Set random cells" onclick="caMap.setRandomCells()">
-        <input type="button" id="RunCAOnce" value="Step" onclick="caMap.clickstep()">
-        <input type="button" id="RunCA" value="Run" onclick="caMap.run(100)">
-        <input type="button" id="StopCA" value="Stop" onclick="caMap.stop()">
+    <div style="width:90%; margin:10 auto; overflow:auto; _display:inline-block;">
+        <div style="width:500px; float:left;">
+            <div id="display">
+                <svg id="CA" width="500" height="500"></svg>
+            </div>
+                <div id="control" class="control">
+                size: <input class="input" type="number" min="1" max="256" name="CASize" value="32" onchange="caMap.setSize()" id="CASize"/>
+                <input class="input" type="button" id="initRand" value="Set random cells" onclick="caMap.setRandomCells()">
+                <input class="input" type="button" id="RunCAOnce" value="Step" onclick="caMap.clickstep()">
+                <input class="input" type="button" id="RunCA" value="Run" onclick="caMap.run(100)">
+                <input class="input" type="button" id="StopCA" value="Stop" onclick="caMap.stop()">
+                <input class="input" type="button" id="clear" value="Clear All" onclick="caMap.clean()">
+            </div>
+        </div>
+        <div style=" margin-left:520px;">
+                <h3>Rule of Game of Life</h3>
+                <ul>
+                    <li>Any live cell with fewer than two live neighbors dies, as if by underpopulation.</li>
+                    <li>Any live cell with two or three live neighbors lives on to the next generation.</li>
+                    <li>Any live cell with more than three live neighbors dies, as if by overpopulation.</li>
+                    <li>Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.</li>
+                </ul>
+                <h3>Instruction for the simulator</h3>
+                <p>This is a simulator for the "Game of Life". After setting initial pattern by clicking "Set random cells" or by 
+                    licking cells, click "run" button, and you will see how the system evoloves. "step" button will evaluate the 
+                    system for one step, and "run" will do it repeatedly.</p>
+        </div> 
     </div>
 </body>
 
