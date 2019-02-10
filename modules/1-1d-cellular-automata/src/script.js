@@ -10,6 +10,7 @@ var pointer = 0;
 var can_run = false;
 var theRule = 110;
 var RuleCode = new Int8Array(8).fill(0);
+var running = d3.interval(function(){return 0}, 10000);
 
 
 ////////////////////
@@ -218,10 +219,10 @@ function putCell(t, index, cellSize, color){
     // Put a cell at (t, index)
     d3.select("#CA")
     .append('rect')
-        .attr('x', index * cellSize)
-        .attr('y', t * cellSize)
-        .attr('rx', cellSize * 0.1)
-        .attr('ry', cellSize * 0.1)
+        .attr('x', index * cellSize + 0.05 * cellSize)
+        .attr('y', t * cellSize + 0.05 * cellSize)
+        //.attr('rx', cellSize * 0.1)
+        //.attr('ry', cellSize * 0.1)
         .attr('width', cellSize * 0.9)
         .attr('height', cellSize * 0.9)
         .attr('fill', color)
@@ -338,6 +339,19 @@ async function RunToEnd(sleepTime = 0){
     }
 }
 
+function continuerun(){
+    stop();
+    running = d3.interval(OneStep, 500);
+}
+
+function stop(){
+    try{
+        running.stop();
+    } catch {
+
+    }
+}
+
 function setRule(){
     theRule = parseInt(document.getElementById("CARule").value);
     Rule2Code();
@@ -346,5 +360,6 @@ function setRule(){
 
 function setSize(){
     spaceSize = parseInt(document.getElementById("CASize").value);
+    setSingleInitCells();
     return 0;
 }

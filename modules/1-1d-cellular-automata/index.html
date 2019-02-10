@@ -1,35 +1,51 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link href="src/style.css" type="text/css" rel="stylesheet">
     <title>1D Elementary Cellular Automata</title>
     <script type="application/javascript" src="https://d3js.org/d3.v5.min.js"></script>
     
 </head>
 <body>
     <h1>1D Cellular Automata</h1>
-    <div id="setting">
-        CA Rule: <input type="number" min="0" max="255" name="CARule" value="110" onchange="setRule()" id="CARule"/>
-        Size: <input type="number" min="0" max="255" name="CASize" value="20" onchange="setSize()" id="CASize"/>
-        <br>
-        <svg id="ECARule" width="500" height="60"></svg>
+    <div id="introduction">
+        <h2>What is Cellular Automata?</h2>
     </div>
-    <br>
-    <div id="display">
-        <svg id="CA" width="500" height="500"></svg>
-    </div>
-    <div id="control">
-            <input type="button" value="Run" id="run" onclick="RunToEnd(500)"/>
-            <input type="button" value="Step" onclick="OneStep()" id="step"/>
-            <input type="button" value="Run to End" id="run_end" onclick="RunToEnd()"/>
-            <input type="button" value="Clear" onclick="clearCells()" id="clear"/>
-        | Initial: 
-        <input type="button" value="Single Cell" onclick="setSingleInitCells()"/>
-        <input type="button" value="Random Cell" onclick="setRandomInitCells()"/>
+    <div style="width:90%; margin:10 auto; overflow:auto; _display:inline-block;">
+        <div style="width:500px; float:left;">
+            <div id="setting">
+            CA Rule: <input class="input" type="number" min="0" max="255" name="CARule" value="110" onchange="setRule()" id="CARule"/>
+            Size: <input class="input" type="number" min="0" max="255" name="CASize" value="20" onchange="setSize()" id="CASize"/>
+            <br>
+            <svg id="ECARule" width="500" height="60"></svg>
+            </div>
+            <br>
+            <div id="display">
+            <svg id="CA" width="500" height="500"></svg>
+            </div>
+            <div id="control">
+            <input class="input" type="button" value="Run" id="run" onclick="continuerun()"/>
+            <input class="input" type="button" value="Stop" id="stop" onclick="stop()"/>
+            <input class="input" type="button" value="Step" onclick="OneStep()" id="step"/>
+            <input class="input" type="button" value="Run to End" id="run_end" onclick="RunToEnd()"/>
+            <input class="input" type="button" value="Clear" onclick="clearCells()" id="clear"/>
+            <br>
+            Set initial cells:
+            <input class="input" type="button" value="Single Cell" onclick="setSingleInitCells()"/>
+            <input class="input" type="button" value="Random Cell" onclick="setRandomInitCells()"/>
         <br>
         <!-- Following is test controler -->
         <!--<h3>Test</h3>
         <input type="button" value="Random Cells" onclick="setRandomCells()"/>-->
         <!-- Bug: It will create cells again -->
+            </div>
+        </div>
+        <div style=" margin-left:520px;">
+            <h3>1D Elementary Cellular Automata</h3>
+            <p>blabla</p>
+            <h3>Introduction to The Simulator</h3>
+            <p>blabla</p>
+        </div>
     </div>
 </body>
 
