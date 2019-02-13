@@ -1,10 +1,10 @@
 # WSS Modules
 
 * [All Modules][all]
-* [1D Cellular Automata][1d-ecas]
-* [2D Cellular Automata][2d-ecas]
-* [Network Scaling Laws][network scaling]
-* [Collective Behavior][collective behavior]
+  * [1D Cellular Automata][1d-ecas]
+  * [2D Cellular Automata][2d-ecas]
+  * [Network Scaling Laws][network scaling]
+  * [Collective Behavior][collective behavior]
 
 [all]: https://elife-asu.github.io/wss-modules
 [1d-ecas]: https://elife-asu.github.io/wss-modules/modules/1-1d-cellular-automata
