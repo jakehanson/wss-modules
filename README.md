@@ -1,5 +1,7 @@
 # WSS Modules
 
+You can find live versions of these modules at the links below.
+
 * [All Modules][all]
   * [1D Cellular Automata][1d-ecas]
   * [2D Cellular Automata][2d-ecas]
