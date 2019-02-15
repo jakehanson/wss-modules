@@ -10,6 +10,16 @@
     <h1>1D Cellular Automata</h1>
     <div id="introduction">
         <h2>What is Cellular Automata?</h2>
+        <p>
+            Consider many cells that form a list or matrix. Each of them have multiple colors, or states. These cells will
+            change their colors depende on their neighbors based on a specific rule. These collection of cells with a certain
+            rule, is a cellular automata (CA).
+        </p>
+        <p>
+            For cells on a list, we call them 1 dimensional cellular automata (1D CA). Their neighbors could be their adjacent
+            cells or other faraway cells. For cells on a matrix, we call them 2 dimensional cellular automata (2D CA), which have
+            similar definition of neighbors.
+        </p>
     </div>
     <div style="width:90%; margin:10 auto; overflow:auto; _display:inline-block;">
         <div style="width:500px; float:left;">
@@ -42,9 +52,21 @@
         </div>
         <div style=" margin-left:520px;">
             <h3>1D Elementary Cellular Automata</h3>
-            <p>blabla</p>
+            <p>
+                1D Elementary Cellular Automata (1D ECA) is a kind of 1D CA with two colors (black and white) and depende on their
+                adjacent cells and the cells itselves. So for ECAs, we will have 2^(2^3)=256 different rules. And we will be able
+                to use number between 0 to 255 to represent a ECA rule.
+            </p>
+            <div id="CA_Animate" class="center">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/One-d-cellular-automate-rule-30.gif" alt="Rule 30 ECA">
+                <br>
+                Animation of a ECA [Wikipedia, <a href="https://en.wikipedia.org/wiki/Cellular_automaton">Cellular Automata</a>]
+            </div>
             <h3>Introduction to The Simulator</h3>
-            <p>blabla</p>
+            <p>We have a simulator on the left. You can click Run/Stop can run the CA. "Run to End" will give you all evaluations. You can
+                also set the initial list to single cell or random cells. You can alter the ECA rule by clicking rule configuration on the
+                above or setting the rule number. 
+            </p>
         </div>
     </div>
 </body>
