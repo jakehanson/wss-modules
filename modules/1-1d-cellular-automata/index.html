@@ -17,7 +17,24 @@
     
 </head>
 <body>
-    <h1>1D Cellular Automata</h1>
+    <header>
+        <h1>1D Elementary Cellular Automata (1D ECA)</h1>
+    </header>
+    <div id="introduction">
+        <p>
+            This 1-Dimensional Elementary Cellular Automata (1D ECA) is a Cellular Automata (CA) where the current state is only one dimension and where each cell is either black or white. The next state is determined by the state of the cell above and it’s neighbors as dictated by the rules. The neighborhood usually includes the adjacent cells but could include other faraway cells. There are numerous sets of rules that dictate the next state. The example here models one set of rules. How many rule variations are possible?
+<!--         <h4>To engage the simulator: </h4>   
+        <OL>
+        <li>Select the rule number. </li>
+        <li>Click either Step, Run (in conjunction with Stop) or Run to End. Run to End will give you all evaluations. Step allows you to see the next row. </li>
+        <li>After the CA is complete, click Clear to start over.</li>  
+        <li>You can set the initial list to Single Cell or Random Cell.</li>  
+        <li>You can alter the ECA rule by clicking rule configuration on the above or setting the rule number.</li>  
+        </OL> -->
+        </p>
+    </div>
+
+<!--     <h1>1D Elementary Cellular Automata (1D ECA)</h1>
     <div id="introduction">
         <h2>What is Cellular Automata?</h2>
         <p>
@@ -30,7 +47,7 @@
             cells or other faraway cells. For cells on a matrix, we call them 2 dimensional cellular automata (2D CA), which have
             similar definition of neighbors.
         </p>
-    </div>
+    </div> -->
     <div style="width:90%; margin:10 auto; overflow:auto; _display:inline-block;">
         <div style="width:500px; float:left;">
             <div id="setting">
@@ -61,24 +78,25 @@
             </div>
         </div>
         <div style=" margin-left:520px;">
-            <h3>1D Elementary Cellular Automata</h3>
-            <p>
-                1D Elementary Cellular Automata (1D ECA) is a kind of 1D CA with two colors (black and white) and depende on their
-                adjacent cells and the cells itselves. So for ECAs, we will have 2^(2^3)=256 different rules. And we will be able
-                to use number between 0 to 255 to represent a ECA rule.
-            </p>
-            <div id="CA_Animate" class="center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/One-d-cellular-automate-rule-30.gif" alt="Rule 30 ECA">
-                <br>
-                Animation of a ECA [Wikipedia, <a href="https://en.wikipedia.org/wiki/Cellular_automaton">Cellular Automata</a>]
-            </div>
             <h3>Introduction to The Simulator</h3>
-            <p>We have a simulator on the left. You can click Run/Stop can run the CA. "Run to End" will give you all evaluations. You can
-                also set the initial list to single cell or random cells. You can alter the ECA rule by clicking rule configuration on the
-                above or setting the rule number. 
+            <p>
+                To engage the simulator:
+                <OL>
+                <li>Select the rule number. </li>
+                <li>Click either Step, Run (in conjunction with Stop) or Run to End. Run to End will give you all evaluations. Step allows you to see the next row. </li>
+                <li>After the CA is complete, click Clear to start over.</li>  
+                <li>You can set the initial list to Single Cell or Random Cell.</li>  
+                <li>You can alter the ECA rule by clicking rule configuration on the above or setting the rule number.</li>  
+                </OL>
             </p>
+<!--             <p>We have a simulator on the left. You can click Run/Stop can run the CA. "Run to End" will give you all evaluations. You can
+                also set the initial list to single cell or random cells. You can alter the ECA rule by clicking rule configuration on the
+                above or setting the rule number.  -->
         </div>
     </div>
+    <footer>
+        Copyright © 2018, <a href="https://emergence.asu.edu">Emergence@ASU</a>
+    </footer>
 </body>
 
 <script type="application/javascript" src="src/script.js"></script>

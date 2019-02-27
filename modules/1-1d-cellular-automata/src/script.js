@@ -17,7 +17,7 @@ var running = d3.interval(function(){return 0}, 10000);
 // Initialize
 
 // Set head color
-d3.selectAll("h1").style("color", "cc3311")
+// d3.selectAll("h1").style("color", "cc3311")
 
 d3.select("#CA")
     .attr('height', svg_height)
@@ -211,7 +211,7 @@ function AddBackGround(){
         .attr('y', 0)
         .attr('width', svg_width)
         .attr('height', svg_height)
-        .attr('fill', 'gray')
+        .attr('fill', 'lightgray')
 }
 
 
