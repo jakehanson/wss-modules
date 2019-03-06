@@ -27,12 +27,9 @@
     
     <div id="whatIsGameofLife">
         <h2>Can we simulate life?</h2>
-        <p>Can we simulate life? Or something that looks like life?</p>
-        <p>Let's play a game, a game of life. Consider a 2D world, where lifes (or agents, cells, etc.) live on a lattice.
-            Each cell can be alive or dead, represented by black or white. All cells follow the same rule: They can only 
-            live in certain density enviroments. If it is too crowded or sparse, they will die. If the density is proper, 
-            a live (black) cell can emerge on a dead (white) cell.</p>
-        <p> </p>
+        <p>Can we create a simulation experience that behaves in ways that mimics life? Or something that looks like life? Let us answer those questions by playing a game called the Game of Life.<p>
+        <h3>Overview of the Game of Life</h3>
+        <p>Consider a 2D world, where agents live in the cells on a lattice. Each agent can be alive (black) or dead (white). However, the agents can only live in certain density environments. If it is too crowded or sparse, the agents will more likely die. Also, if the density is not too high, a live (black) agent can emerge on a dead (white) agent. In successive steps this is determined according to the rules of the Game of Life.</p>
     </div>
     <div style="width:90%; margin:10 auto; overflow:auto; _display:inline-block;">
         <div style="width:500px; float:left;">
@@ -49,22 +46,30 @@
             </div>
         </div>
         <div style=" margin-left:520px;">
-                <h3>Rule of Game of Life</h3>
+        		<h3>Rules of the Game of Life</h3>
                 <ul>
                     <li>Any live cell with fewer than two live neighbors dies, as if by underpopulation.</li>
                     <li>Any live cell with two or three live neighbors lives on to the next generation.</li>
                     <li>Any live cell with more than three live neighbors dies, as if by overpopulation.</li>
                     <li>Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.</li>
                 </ul>
-                <h3>Instruction for the simulator</h3>
-                <p>This is a simulator for the "Game of Life". After setting initial pattern by clicking "Set random cells" or by 
-                    licking cells, click "run" button, and you will see how the system evoloves. "step" button will evaluate the 
-                    system for one step, and "run" will do it repeatedly.</p>
+                <h3>Instructions for the simulator</h3>
+                <p>To operate this simulator for the Game of Life:
+                <Ol>
+                    <li>
+                    	Set the initial pattern by clicking <b>Set random cells</b> or by clicking the cells you would like to be alive (black) or dead (white).
+                    </li>
+                    <li> 
+                    	To see how the system evolves, click either <b>Step</b> to advance the game by one step or the <b>Run</b> button to advance steps faster. If you click <b>Run</b>, you can stop the simulator from advancing by clicking <b>Stop</b>.
+                    </li>
+                    <li><b>Clear All</b> will allow you to start the game over again.</li>
+                </Ol>
+                </p>
         </div> 
     </div>
-    <footer>
+<!--     <footer>
         Copyright © 2018, <a href="https://emergence.asu.edu">Emergence@ASU</a>
-    </footer>
+    </footer> -->
 </body>
 
 <script type="application/javascript" src="src/functions.js"></script>
